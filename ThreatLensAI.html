@@ -1,0 +1,4218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThreatLens AI — Adaptive Cybersecurity</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#050914;
+    --panel:#0b1220;
+    --panel2:#101a2b;
+    --border:rgba(255,255,255,.08);
+    --text:#eef5ff;
+    --muted:#8290a8;
+    --cyan:#31d7ff;
+    --blue:#5b7cff;
+    --green:#35e29a;
+    --yellow:#ffc857;
+    --orange:#ff9d42;
+    --red:#ff5577;
+    --purple:#a875ff;
+    --shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+body{
+    background:
+      radial-gradient(circle at 20% 0%,rgba(49,215,255,.10),transparent 25%),
+      radial-gradient(circle at 90% 10%,rgba(91,124,255,.12),transparent 25%),
+      var(--bg);
+    color:var(--text);
+    font-family:Inter,sans-serif;
+    min-height:100vh;
+}
+
+button,input,textarea,select{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* ================= LOGIN ================= */
+
+.auth-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+}
+
+.auth-box{
+    width:100%;
+    max-width:430px;
+    background:rgba(11,18,32,.92);
+    border:1px solid var(--border);
+    border-radius:28px;
+    padding:34px;
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(20px);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:"Space Grotesk";
+    font-weight:700;
+    font-size:25px;
+}
+
+.logo-icon{
+    width:46px;
+    height:46px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    color:#06101c;
+    font-size:23px;
+    box-shadow:0 0 30px rgba(49,215,255,.25);
+}
+
+.auth-box h1{
+    font-size:30px;
+    margin-top:32px;
+    margin-bottom:8px;
+}
+
+.auth-box p{
+    color:var(--muted);
+    line-height:1.6;
+}
+
+.input-group{
+    margin-top:18px;
+}
+
+.input-group label{
+    display:block;
+    font-size:12px;
+    color:#9ba8bd;
+    margin-bottom:8px;
+}
+
+.input-group input{
+    width:100%;
+    padding:14px 15px;
+    background:#070d18;
+    border:1px solid var(--border);
+    border-radius:12px;
+    color:white;
+    outline:none;
+}
+
+.input-group input:focus{
+    border-color:var(--cyan);
+}
+
+.primary-btn{
+    border:0;
+    width:100%;
+    margin-top:22px;
+    padding:15px;
+    border-radius:13px;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    color:#06101c;
+    font-weight:800;
+}
+
+.auth-switch{
+    text-align:center;
+    margin-top:20px;
+    font-size:13px;
+}
+
+.auth-switch span{
+    color:var(--cyan);
+    cursor:pointer;
+    font-weight:700;
+}
+
+.demo-note{
+    margin-top:20px;
+    padding:12px;
+    background:rgba(49,215,255,.06);
+    border:1px solid rgba(49,215,255,.12);
+    border-radius:12px;
+    font-size:11px;
+    color:#8ca2bb;
+}
+
+/* ================= APP ================= */
+
+.app{
+    display:none;
+    min-height:100vh;
+}
+
+.app.active{
+    display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:245px;
+    background:rgba(7,12,22,.92);
+    border-right:1px solid var(--border);
+    padding:24px 15px;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    z-index:30;
+}
+
+.sidebar-logo{
+    padding:0 10px 28px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.nav button{
+    border:0;
+    background:transparent;
+    color:#7e8da6;
+    text-align:left;
+    padding:13px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:13px;
+    transition:.2s;
+}
+
+.nav button:hover,
+.nav button.active{
+    background:rgba(49,215,255,.09);
+    color:var(--cyan);
+}
+
+.nav-icon{
+    width:24px;
+    text-align:center;
+}
+
+.sidebar-bottom{
+    position:absolute;
+    bottom:20px;
+    left:15px;
+    right:15px;
+}
+
+.protection-mini{
+    background:linear-gradient(135deg,rgba(53,226,154,.1),rgba(49,215,255,.06));
+    border:1px solid rgba(53,226,154,.15);
+    border-radius:15px;
+    padding:14px;
+    font-size:11px;
+    color:#93a8b8;
+}
+
+.protection-mini strong{
+    color:var(--green);
+}
+
+/* MAIN */
+
+.main{
+    margin-left:245px;
+    width:calc(100% - 245px);
+    min-height:100vh;
+}
+
+.topbar{
+    height:75px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 32px;
+    border-bottom:1px solid var(--border);
+    background:rgba(5,9,20,.7);
+    backdrop-filter:blur(15px);
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+.mobile-menu{
+    display:none;
+    border:0;
+    background:transparent;
+    color:white;
+    font-size:23px;
+}
+
+.search{
+    width:320px;
+    background:#0b1322;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:11px 14px;
+    color:white;
+    outline:none;
+}
+
+.top-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.icon-btn{
+    width:39px;
+    height:39px;
+    border:1px solid var(--border);
+    background:#0b1322;
+    border-radius:11px;
+    color:#c4cfdf;
+    position:relative;
+}
+
+.notification-dot{
+    position:absolute;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--red);
+    top:7px;
+    right:7px;
+}
+
+.profile-chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:5px 10px 5px 5px;
+    border:1px solid var(--border);
+    border-radius:20px;
+}
+
+.avatar{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    font-size:12px;
+    font-weight:800;
+}
+
+.content{
+    padding:30px;
+    max-width:1450px;
+    margin:auto;
+}
+
+/* ================= SCREEN ================= */
+
+.screen{
+    display:none;
+    animation:fadeIn .25s ease;
+}
+
+.screen.active{
+    display:block;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(7px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.page-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:25px;
+}
+
+.page-title h2{
+    font-family:"Space Grotesk";
+    font-size:27px;
+}
+
+.page-title p{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:6px;
+}
+
+/* ================= DASHBOARD ================= */
+
+.hero{
+    background:
+      radial-gradient(circle at 80% 20%,rgba(49,215,255,.15),transparent 30%),
+      linear-gradient(135deg,#0c1729,#09111f);
+    border:1px solid var(--border);
+    border-radius:25px;
+    padding:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
+}
+
+.hero:after{
+    content:"";
+    position:absolute;
+    width:220px;
+    height:220px;
+    border:1px solid rgba(49,215,255,.08);
+    border-radius:50%;
+    right:80px;
+    top:-90px;
+}
+
+.hero h1{
+    font-family:"Space Grotesk";
+    font-size:31px;
+    max-width:600px;
+}
+
+.hero p{
+    color:var(--muted);
+    margin-top:10px;
+    max-width:620px;
+    line-height:1.6;
+}
+
+.hero-badge{
+    background:rgba(53,226,154,.09);
+    border:1px solid rgba(53,226,154,.18);
+    color:var(--green);
+    padding:9px 13px;
+    border-radius:20px;
+    font-size:11px;
+    display:inline-block;
+    margin-bottom:13px;
+}
+
+.score{
+    min-width:150px;
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+
+.score-ring{
+    width:125px;
+    height:125px;
+    border-radius:50%;
+    margin:auto;
+    display:grid;
+    place-items:center;
+    background:
+      radial-gradient(circle,#0a1422 57%,transparent 58%),
+      conic-gradient(var(--green) 0 82%,#172335 82% 100%);
+}
+
+.score-ring strong{
+    font-size:31px;
+}
+
+.score small{
+    display:block;
+    color:var(--muted);
+    margin-top:9px;
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    gap:16px;
+}
+
+.grid-4{
+    grid-template-columns:repeat(4,1fr);
+}
+
+.grid-3{
+    grid-template-columns:repeat(3,1fr);
+}
+
+.grid-2{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.stat-card,
+.card{
+    background:rgba(11,18,32,.85);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+}
+
+.stat-card{
+    margin-top:18px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.stat-value{
+    font-size:27px;
+    font-weight:800;
+    margin-top:9px;
+}
+
+.stat-change{
+    font-size:11px;
+    color:var(--green);
+    margin-top:7px;
+}
+
+.section{
+    margin-top:24px;
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:13px;
+}
+
+.section-header h3{
+    font-size:16px;
+}
+
+.link-btn{
+    border:0;
+    background:transparent;
+    color:var(--cyan);
+    font-size:11px;
+}
+
+/* QUICK ACTIONS */
+
+.quick-action{
+    padding:18px;
+    background:#0b1423;
+    border:1px solid var(--border);
+    border-radius:16px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.quick-action:hover{
+    transform:translateY(-3px);
+    border-color:rgba(49,215,255,.3);
+}
+
+.qa-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:rgba(49,215,255,.08);
+    font-size:19px;
+    margin-bottom:13px;
+}
+
+.quick-action strong{
+    font-size:13px;
+}
+
+.quick-action p{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:5px;
+    line-height:1.5;
+}
+
+/* ALERT */
+
+.alert-item{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:13px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.alert-item:last-child{
+    border:0;
+}
+
+.alert-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+}
+
+.red{background:rgba(255,85,119,.1);color:var(--red)}
+.yellow{background:rgba(255,200,87,.1);color:var(--yellow)}
+.green{background:rgba(53,226,154,.1);color:var(--green)}
+.blue{background:rgba(49,215,255,.1);color:var(--cyan)}
+.purple{background:rgba(168,117,255,.1);color:var(--purple)}
+
+.alert-content{
+    flex:1;
+}
+
+.alert-content strong{
+    font-size:12px;
+}
+
+.alert-content p{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:4px;
+}
+
+.badge{
+    padding:5px 8px;
+    border-radius:8px;
+    font-size:9px;
+    font-weight:700;
+}
+
+.badge.high{
+    color:var(--red);
+    background:rgba(255,85,119,.09);
+}
+
+.badge.medium{
+    color:var(--yellow);
+    background:rgba(255,200,87,.09);
+}
+
+.badge.low{
+    color:var(--green);
+    background:rgba(53,226,154,.09);
+}
+
+/* ================= SCANNER ================= */
+
+.scan-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.scan-card{
+    min-height:170px;
+    border-radius:20px;
+    padding:21px;
+    background:linear-gradient(145deg,#0d1727,#09111e);
+    border:1px solid var(--border);
+    cursor:pointer;
+    transition:.25s;
+    position:relative;
+    overflow:hidden;
+}
+
+.scan-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(49,215,255,.3);
+    box-shadow:0 15px 35px rgba(0,0,0,.2);
+}
+
+.scan-card .big-icon{
+    font-size:26px;
+    margin-bottom:20px;
+}
+
+.scan-card h3{
+    font-size:15px;
+}
+
+.scan-card p{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.5;
+    margin-top:7px;
+}
+
+.scan-card span{
+    position:absolute;
+    right:18px;
+    top:18px;
+    color:#506079;
+}
+
+/* ================= ANALYZER ================= */
+
+.analyzer{
+    max-width:850px;
+}
+
+.back-btn{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    margin-bottom:20px;
+    padding:0;
+}
+
+.analyzer-box{
+    background:#0b1423;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:25px;
+}
+
+.analyzer-box h3{
+    font-family:"Space Grotesk";
+    font-size:20px;
+}
+
+.analyzer-box > p{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:7px;
+    line-height:1.6;
+}
+
+textarea,
+.text-input{
+    width:100%;
+    margin-top:18px;
+    border:1px solid var(--border);
+    background:#070d18;
+    border-radius:14px;
+    padding:15px;
+    color:white;
+    resize:vertical;
+    outline:none;
+}
+
+textarea{
+    min-height:140px;
+}
+
+.analyze-btn{
+    border:0;
+    padding:13px 20px;
+    border-radius:11px;
+    margin-top:13px;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    color:#04101c;
+    font-weight:800;
+}
+
+.analysis-result{
+    margin-top:20px;
+    display:none;
+}
+
+.analysis-result.show{
+    display:block;
+    animation:fadeIn .4s;
+}
+
+.risk-banner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:17px;
+    border-radius:14px;
+    background:rgba(255,85,119,.08);
+    border:1px solid rgba(255,85,119,.16);
+}
+
+.risk-number{
+    font-size:29px;
+    font-weight:800;
+    color:var(--red);
+}
+
+.reason{
+    padding:13px;
+    margin-top:8px;
+    border-radius:11px;
+    background:#08111e;
+    font-size:11px;
+    color:#a7b3c7;
+}
+
+.prediction{
+    margin-top:16px;
+    padding:17px;
+    background:rgba(168,117,255,.07);
+    border:1px solid rgba(168,117,255,.14);
+    border-radius:14px;
+}
+
+.prediction strong{
+    color:var(--purple);
+}
+
+/* ================= PRIVACY ================= */
+
+.privacy-card{
+    padding:22px;
+    border-radius:18px;
+    border:1px solid var(--border);
+    background:#0b1423;
+}
+
+.privacy-icon{
+    font-size:27px;
+    margin-bottom:15px;
+}
+
+.privacy-card h3{
+    font-size:15px;
+}
+
+.privacy-card p{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.6;
+    margin-top:6px;
+}
+
+.privacy-risk{
+    margin-top:14px;
+    padding:8px 10px;
+    border-radius:8px;
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+}
+
+/* ================= PERMISSION ================= */
+
+.permission-row{
+    display:flex;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    gap:12px;
+}
+
+.permission-row:last-child{
+    border:0;
+}
+
+.permission-icon{
+    width:37px;
+    height:37px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    background:#101b2d;
+}
+
+.permission-info{
+    flex:1;
+}
+
+.permission-info strong{
+    font-size:12px;
+}
+
+.permission-info p{
+    font-size:10px;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.status{
+    font-size:10px;
+    font-weight:700;
+}
+
+/* ================= DEFENSE LAB ================= */
+
+.attack-flow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    overflow:auto;
+    padding:15px 0;
+}
+
+.flow-node{
+    min-width:135px;
+    padding:15px;
+    background:#0b1423;
+    border:1px solid var(--border);
+    border-radius:13px;
+    text-align:center;
+}
+
+.flow-node.active{
+    border-color:var(--cyan);
+    box-shadow:0 0 25px rgba(49,215,255,.12);
+}
+
+.flow-node span{
+    font-size:20px;
+    display:block;
+    margin-bottom:8px;
+}
+
+.flow-node strong{
+    font-size:10px;
+}
+
+.flow-arrow{
+    color:#4d5d73;
+}
+
+.sim-console{
+    background:#050a12;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:17px;
+    min-height:200px;
+    font-family:monospace;
+    font-size:11px;
+    line-height:1.8;
+    color:#8fa2ba;
+    overflow:auto;
+}
+
+.console-green{color:var(--green)}
+.console-cyan{color:var(--cyan)}
+.console-yellow{color:var(--yellow)}
+.console-red{color:var(--red)}
+
+/* ================= THREAT INTEL ================= */
+
+.threat-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.threat-table th{
+    color:#687993;
+    font-size:10px;
+    text-align:left;
+    padding:11px;
+    border-bottom:1px solid var(--border);
+}
+
+.threat-table td{
+    padding:14px 11px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    font-size:11px;
+}
+
+.campaign{
+    padding:20px;
+    border-radius:18px;
+    background:linear-gradient(135deg,rgba(168,117,255,.08),rgba(49,215,255,.05));
+    border:1px solid rgba(168,117,255,.15);
+}
+
+.signal{
+    display:inline-flex;
+    padding:7px 10px;
+    margin:5px 3px 0 0;
+    background:#111d30;
+    border-radius:8px;
+    font-size:9px;
+    color:#9caac0;
+}
+
+/* ================= SETTINGS ================= */
+
+.setting{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:17px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.setting:last-child{
+    border:0;
+}
+
+.setting-info{
+    display:flex;
+    gap:13px;
+    align-items:center;
+}
+
+.setting-icon{
+    width:39px;
+    height:39px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    background:#101b2d;
+}
+
+.setting-info strong{
+    font-size:12px;
+}
+
+.setting-info p{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:3px;
+}
+
+.switch{
+    width:43px;
+    height:24px;
+    border-radius:20px;
+    background:#273244;
+    padding:3px;
+    cursor:pointer;
+}
+
+.switch:after{
+    content:"";
+    width:18px;
+    height:18px;
+    background:#758197;
+    display:block;
+    border-radius:50%;
+    transition:.2s;
+}
+
+.switch.on{
+    background:rgba(53,226,154,.3);
+}
+
+.switch.on:after{
+    transform:translateX(19px);
+    background:var(--green);
+}
+
+/* ================= PROFILE ================= */
+
+.profile-header{
+    padding:25px;
+    background:#0b1423;
+    border:1px solid var(--border);
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    gap:17px;
+}
+
+.big-avatar{
+    width:70px;
+    height:70px;
+    border-radius:20px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    font-size:25px;
+    font-weight:800;
+}
+
+.profile-header h3{
+    font-size:20px;
+}
+
+.profile-header p{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:5px;
+}
+
+/* ================= AI ================= */
+
+.chat-box{
+    height:470px;
+    display:flex;
+    flex-direction:column;
+}
+
+.chat-messages{
+    flex:1;
+    overflow:auto;
+    padding-right:5px;
+}
+
+.chat{
+    max-width:80%;
+    padding:13px;
+    border-radius:14px;
+    margin-bottom:10px;
+    font-size:11px;
+    line-height:1.6;
+}
+
+.chat.ai{
+    background:#101b2d;
+    color:#b8c4d5;
+    border-top-left-radius:3px;
+}
+
+.chat.user{
+    margin-left:auto;
+    background:linear-gradient(135deg,#174b60,#273d83);
+    border-top-right-radius:3px;
+}
+
+.chat-input{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.chat-input input{
+    flex:1;
+    background:#070d18;
+    border:1px solid var(--border);
+    color:white;
+    border-radius:11px;
+    padding:12px;
+    outline:none;
+}
+
+.chat-input button{
+    width:45px;
+    border:0;
+    border-radius:11px;
+    background:var(--cyan);
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(7px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:430px;
+    background:#0c1525;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:24px;
+    box-shadow:var(--shadow);
+    animation:modalIn .25s;
+}
+
+@keyframes modalIn{
+    from{transform:scale(.95);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+.modal-top{
+    display:flex;
+    justify-content:space-between;
+}
+
+.close{
+    border:0;
+    background:transparent;
+    color:#8a98ad;
+    font-size:20px;
+}
+
+.modal-box h3{
+    margin-top:18px;
+    font-size:19px;
+}
+
+.modal-box p{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.7;
+    margin-top:8px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:8px;
+    margin-top:20px;
+}
+
+.modal-actions button{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#101b2d;
+    color:white;
+}
+
+.modal-actions .danger{
+    background:rgba(255,85,119,.1);
+    color:var(--red);
+    border-color:rgba(255,85,119,.2);
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    background:#101b2c;
+    border:1px solid rgba(49,215,255,.2);
+    padding:14px 18px;
+    border-radius:13px;
+    box-shadow:var(--shadow);
+    font-size:11px;
+    z-index:200;
+    transform:translateY(100px);
+    opacity:0;
+    transition:.3s;
+}
+
+.toast.show{
+    transform:translateY(0);
+    opacity:1;
+}
+
+.toast strong{
+    color:var(--cyan);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:950px){
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+        width:260px;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    .search{
+        display:none;
+    }
+
+    .content{
+        padding:18px;
+    }
+
+    .grid-4{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid-3{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .scan-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .hero{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:25px;
+    }
+
+    .score{
+        align-self:center;
+    }
+}
+
+@media(max-width:600px){
+
+    .profile-chip span{
+        display:none;
+    }
+
+    .page-title h2{
+        font-size:22px;
+    }
+
+    .grid-4,
+    .grid-3,
+    .grid-2,
+    .scan-grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero h1{
+        font-size:25px;
+    }
+
+    .stat-card{
+        margin-top:0;
+    }
+
+    .topbar{
+        height:65px;
+    }
+
+    .content{
+        padding:14px;
+    }
+
+    .auth-box{
+        padding:25px;
+    }
+
+    .attack-flow{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .flow-arrow{
+        text-align:center;
+        transform:rotate(90deg);
+    }
+
+    .flow-node{
+        min-width:0;
+    }
+}
+
+/* ================= ROUND 2 DEMO ENHANCEMENTS ================= */
+.demo-launch{
+    margin-top:18px;
+    padding:16px;
+    border-radius:18px;
+    border:1px solid rgba(49,215,255,.20);
+    background:
+      radial-gradient(circle at 100% 0%,rgba(168,117,255,.14),transparent 45%),
+      linear-gradient(135deg,rgba(49,215,255,.08),rgba(91,124,255,.05));
+}
+.demo-launch strong{font-size:13px}
+.demo-launch p{color:var(--muted);font-size:10px;line-height:1.55;margin:6px 0 12px}
+.demo-btn{
+    border:1px solid rgba(49,215,255,.25);
+    background:linear-gradient(135deg,#12384b,#18295a);
+    color:#eafaff;
+    padding:11px 14px;
+    border-radius:11px;
+    font-weight:800;
+    font-size:11px;
+    cursor:pointer;
+}
+.demo-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(49,215,255,.12)}
+
+.live-demo-hero{
+    background:
+      radial-gradient(circle at 85% 10%,rgba(255,85,119,.16),transparent 30%),
+      radial-gradient(circle at 20% 100%,rgba(49,215,255,.10),transparent 35%),
+      linear-gradient(135deg,#0b1424,#080e1a);
+    border:1px solid rgba(255,85,119,.16);
+    border-radius:22px;
+    padding:22px;
+}
+.live-demo-hero .demo-status{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:7px 10px;border-radius:20px;
+    font-size:10px;font-weight:800;
+    background:rgba(255,85,119,.10);
+    color:var(--red);
+    border:1px solid rgba(255,85,119,.18);
+}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(255,85,119,.6);animation:pulseDot 1.5s infinite}
+@keyframes pulseDot{70%{box-shadow:0 0 0 8px rgba(255,85,119,0)}100%{box-shadow:0 0 0 0 rgba(255,85,119,0)}}
+
+.demo-toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.scenario-btn{
+    border:1px solid var(--border);background:#0d1727;color:#b9c6d8;
+    padding:9px 12px;border-radius:10px;font-size:10px;font-weight:700;
+}
+.scenario-btn.active,.scenario-btn:hover{border-color:rgba(49,215,255,.35);color:var(--cyan);background:rgba(49,215,255,.07)}
+
+.demo-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:16px;margin-top:16px}
+.attack-story,.prediction-card,.incident-card{background:#0b1423;border:1px solid var(--border);border-radius:18px;padding:19px}
+.attack-story h3,.prediction-card h3,.incident-card h3{font-size:14px}
+.timeline{position:relative;margin-top:16px;padding-left:18px}
+.timeline:before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:#1b2a40}
+.timeline-item{position:relative;padding:0 0 17px 17px}
+.timeline-item:before{
+    content:"";position:absolute;left:-17px;top:2px;width:9px;height:9px;border-radius:50%;
+    background:#43546c;border:2px solid #0b1423;
+}
+.timeline-item.active:before{background:var(--cyan);box-shadow:0 0 14px rgba(49,215,255,.55)}
+.timeline-item.danger:before{background:var(--red);box-shadow:0 0 14px rgba(255,85,119,.45)}
+.timeline-item.done:before{background:var(--green)}
+.timeline-item strong{font-size:11px}.timeline-item p{color:var(--muted);font-size:10px;line-height:1.5;margin-top:3px}
+.timeline-time{float:right;color:#586981;font-size:9px}
+
+.score-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:15px}
+.score-box{padding:13px;border-radius:13px;text-align:center;background:#08111e;border:1px solid var(--border)}
+.score-box strong{font-size:25px}.score-box small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.score-arrow{color:var(--cyan);font-size:20px}
+
+.prediction-meter{height:8px;background:#1a2536;border-radius:20px;overflow:hidden;margin:10px 0 5px}
+.prediction-meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:20px;transition:width 1s ease}
+.confidence-row{display:flex;justify-content:space-between;color:#8e9cb0;font-size:9px}
+
+.attack-chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.chain-node{padding:9px 10px;border:1px solid var(--border);background:#0f1a2c;border-radius:10px;font-size:9px}
+.chain-node.current{border-color:rgba(255,85,119,.35);color:var(--red);background:rgba(255,85,119,.07)}
+.chain-arrow{color:#53657d;font-size:11px}
+
+.reason-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.indicator{padding:10px;border-radius:10px;background:#08111e;border:1px solid rgba(255,255,255,.05);font-size:9px;color:#a8b4c6}
+.indicator b{display:block;color:#eaf2ff;font-size:10px;margin-bottom:3px}
+
+.demo-console{height:235px;overflow:auto;background:#040911;border:1px solid rgba(49,215,255,.10);border-radius:13px;padding:14px;font:10px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace}
+.log-line{opacity:0;animation:logIn .35s forwards}.log-line .time{color:#53647a}.log-line .tag{font-weight:800}
+@keyframes logIn{to{opacity:1}}
+
+.intel-card{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.intel-card:last-child{border-bottom:0}.intel-icon{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#101b2d}
+.intel-card strong{font-size:10px}.intel-card p{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4}
+
+.demo-progress{margin-top:14px}
+.progress-label{display:flex;justify-content:space-between;font-size:9px;color:#8391a5;margin-bottom:5px}
+.progress-track{height:6px;background:#182336;border-radius:20px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .7s ease}
+
+.action-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.action-row button{border:1px solid var(--border);background:#101b2d;color:#dce7f5;border-radius:10px;padding:10px 12px;font-size:10px;font-weight:700}
+.action-row button.primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#06101c;border:0}
+
+@media(max-width:900px){.demo-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.reason-grid{grid-template-columns:1fr}.score-compare{grid-template-columns:1fr}.score-arrow{transform:rotate(90deg);text-align:center}}
+
+
+/* ================= LIVE ATTACK VISUALIZATION ================= */
+.live-visual{margin-top:16px;background:#07101d;border:1px solid rgba(49,215,255,.14);border-radius:20px;padding:18px;overflow:hidden}
+.live-visual-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.live-visual-head h3{font-size:14px}.live-visual-head p{font-size:9px;color:var(--muted);margin-top:3px}
+.visual-stage{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;align-items:stretch;margin-top:15px}
+.visual-node{background:#0b1727;border:1px solid #1c2d43;border-radius:16px;padding:14px;min-height:145px;position:relative;transition:.35s}
+.visual-node.active{border-color:rgba(49,215,255,.55);box-shadow:0 0 24px rgba(49,215,255,.10);transform:translateY(-2px)}
+.visual-node.danger{border-color:rgba(255,85,119,.6);box-shadow:0 0 24px rgba(255,85,119,.12)}
+.visual-node.done{border-color:rgba(53,226,154,.4)}
+.visual-label{font-size:9px;color:#718199;letter-spacing:.08em;font-weight:800}
+.visual-icon{font-size:27px;margin:10px 0 7px}.visual-node strong{font-size:12px;display:block}.visual-node p{font-size:9px;color:#9caac0;line-height:1.5;margin-top:5px}
+.visual-arrow{display:flex;align-items:center;justify-content:center;color:#41536b;font-size:25px;font-weight:800}.visual-arrow.active{color:var(--cyan);text-shadow:0 0 12px rgba(49,215,255,.5)}
+.event-card{margin-top:12px;background:#050b13;border:1px solid rgba(255,255,255,.06);border-radius:13px;padding:12px;font:10px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace}
+.event-line{display:flex;gap:8px;flex-wrap:wrap}.event-key{color:#64758d}.event-value{color:#dce7f5}.event-value.alert{color:var(--red)}.event-value.good{color:var(--green)}
+.signal-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.signal-pill{padding:6px 8px;border-radius:8px;background:#0d1a2b;border:1px solid #1b2b40;color:#8fa0b5;font-size:8px;transition:.25s}.signal-pill.hit{border-color:rgba(255,85,119,.4);color:#ff9aaf;background:rgba(255,85,119,.07)}
+.attack-chain .chain-node{transition:.3s}.attack-chain .chain-node.reached{border-color:rgba(53,226,154,.45);color:var(--green);background:rgba(53,226,154,.06)}.attack-chain .chain-node.next{border-color:rgba(49,215,255,.5);color:var(--cyan);background:rgba(49,215,255,.06);box-shadow:0 0 15px rgba(49,215,255,.08)}
+.honeypot-visual{margin-top:12px;padding:11px;border-radius:12px;background:linear-gradient(135deg,rgba(168,117,255,.08),rgba(49,215,255,.04));border:1px dashed rgba(168,117,255,.28);display:none}.honeypot-visual.show{display:block;animation:logIn .35s forwards}.honeypot-visual strong{font-size:10px}.honeypot-visual p{font-size:9px;color:#9caac0;margin-top:3px;line-height:1.5}
+@media(max-width:800px){.visual-stage{grid-template-columns:1fr}.visual-arrow{transform:rotate(90deg);min-height:24px}}
+
+
+/* =========================================================
+SOC INCIDENT RECONSTRUCTION UI
+========================================================= */
+.soc-hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;padding:22px;border:1px solid rgba(49,215,255,.14);background:linear-gradient(135deg,#091525,#0b1423);border-radius:20px}
+.soc-actions{display:flex;gap:8px;flex-wrap:wrap}.soc-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px}.soc-grid{display:grid;grid-template-columns:1fr 1.35fr;gap:14px;margin-top:15px}.soc-panel{background:#0b1423;border:1px solid var(--border);border-radius:18px;padding:16px}.telemetry-tabs{display:flex;gap:6px;margin:13px 0 10px;flex-wrap:wrap}.telemetry-tab{border:1px solid rgba(255,255,255,.07);background:#0d1929;color:#8fa0b7;border-radius:9px;padding:8px 10px;font-size:9px;cursor:pointer}.telemetry-tab.active{color:#dff9ff;border-color:rgba(49,215,255,.4);background:rgba(49,215,255,.08)}.telemetry-stream{height:260px;overflow:auto;background:#06101c;border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:10px;font-family:monospace;font-size:9px;line-height:1.7}.telemetry-row{padding:8px;border-bottom:1px solid rgba(255,255,255,.035);animation:socIn .25s ease}.telemetry-row b{color:#d8e4f2}.telemetry-row .host{color:#31d7ff}.telemetry-row .kind{color:#a875ff}.telemetry-row .danger{color:#ff6b81}.empty-state{color:#687991;padding:25px;text-align:center;font-size:10px}.incident-graph-wrap{background:#06101c;border:1px solid rgba(255,255,255,.05);border-radius:14px;margin-top:12px;overflow:auto}.incident-graph{width:100%;min-width:620px;height:360px}.graph-edge{stroke:#4f6583;stroke-width:2;fill:none;opacity:.45;marker-end:url(#socArrow);transition:.25s}.graph-edge.active{stroke:#31d7ff;opacity:1;stroke-width:3}.graph-edge.predicted{stroke:#a875ff;stroke-dasharray:7 5;opacity:1}.graph-node circle{fill:#0c1a2b;stroke:#425873;stroke-width:2}.graph-node text{fill:#dbe6f4;font-size:11px;text-anchor:middle;font-family:Arial,sans-serif}.graph-node .sub{fill:#74869f;font-size:8px}.graph-node.compromised circle{stroke:#ff667d;fill:rgba(255,102,125,.12)}.graph-node.root circle{stroke:#35e29a;fill:rgba(53,226,154,.10)}.graph-node.suspicious circle{stroke:#ffb24a;fill:rgba(255,178,74,.10)}.graph-node.predicted circle{stroke:#a875ff;fill:rgba(168,117,255,.13);stroke-dasharray:5 3}.graph-legend{display:flex;gap:12px;flex-wrap:wrap;color:#718199;font-size:8px;margin-top:8px}.graph-legend span:nth-child(1){color:#ff667d}.graph-legend span:nth-child(2){color:#ffb24a}.graph-legend span:nth-child(3){color:#a875ff}.graph-legend span:nth-child(4){color:#35e29a}.soc-chain{margin-top:14px;gap:6px;display:flex;flex-wrap:wrap}.soc-evidence{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.soc-evidence div{background:#08111e;border:1px solid rgba(255,255,255,.05);border-radius:11px;padding:11px}.soc-evidence b{display:block;font-size:9px;color:#718199;text-transform:uppercase}.soc-evidence span{display:block;margin-top:5px;font-size:10px;color:#d2deed;line-height:1.4}.next-target-panel{text-align:center}.target-orbit{height:120px;display:grid;place-items:center;position:relative}.orbit-ring{position:absolute;width:100px;height:100px;border:1px dashed rgba(168,117,255,.45);border-radius:50%;animation:socSpin 6s linear infinite}.target-core{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#101c30;border:2px solid #a875ff;color:#fff;font-weight:800;font-size:16px;z-index:1}.next-target-panel h3{font-size:15px}.next-target-panel p{font-size:10px;color:#8797ab;line-height:1.5;max-width:330px;margin:7px auto 12px}.attack-techniques{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.tech-card{background:#08111e;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px}.tech-card .tech-id{color:#31d7ff;font-size:9px;font-family:monospace}.tech-card strong{display:block;font-size:11px;margin-top:4px}.tech-card p{font-size:9px;color:#7f90a6;line-height:1.45;margin-top:5px}.soc-console{margin-top:15px;background:#040b13;border:1px solid rgba(49,215,255,.12);border-radius:14px;padding:13px;height:145px;overflow:auto;font:9px/1.75 monospace;color:#9db0c5}.soc-console .time{color:#50637b}.soc-console .tag{display:inline-block;margin:0 5px;padding:1px 5px;border-radius:4px;background:#101c2b;color:#31d7ff}.soc-log-new{animation:socIn .2s ease}.soc-kpis .stat-value{font-size:20px}.soc-kpis .stat-change{font-size:9px}@keyframes socIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes socSpin{to{transform:rotate(360deg)}}
+@media(max-width:900px){.soc-hero{flex-direction:column;align-items:flex-start}.soc-kpis{grid-template-columns:repeat(2,1fr)}.soc-grid{grid-template-columns:1fr}.soc-evidence{grid-template-columns:1fr}.attack-techniques{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.soc-kpis{grid-template-columns:1fr}.attack-techniques{grid-template-columns:1fr}.soc-actions{width:100%}.soc-actions button{flex:1}.incident-graph{min-width:560px}}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+LOGIN
+========================================================= -->
+
+<section class="auth-screen" id="authScreen">
+
+    <div class="auth-box">
+
+        <div class="logo">
+            <div class="logo-icon">🛡</div>
+            <span>ThreatLens AI</span>
+        </div>
+
+        <div id="loginForm">
+
+            <h1>Welcome back</h1>
+            <p>Predictive AI-powered personal cybersecurity and privacy defense.</p>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input id="loginEmail" type="email" placeholder="you@example.com">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input id="loginPassword" type="password" placeholder="••••••••">
+            </div>
+
+            <button class="primary-btn" onclick="login()">
+                Enter ThreatLens AI →
+            </button>
+
+            <div class="auth-switch">
+                New to ThreatLens AI?
+                <span onclick="showRegister()">Create account</span>
+            </div>
+
+        </div>
+
+        <div id="registerForm" class="hidden">
+
+            <h1>Create account</h1>
+            <p>Start building your personal digital security layer.</p>
+
+            <div class="input-group">
+                <label>Full Name</label>
+                <input id="registerName" type="text" placeholder="Your name">
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" placeholder="you@example.com">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" placeholder="Create password">
+            </div>
+
+            <button class="primary-btn" onclick="login()">
+                Create Secure Profile →
+            </button>
+
+            <div class="auth-switch">
+                Already registered?
+                <span onclick="showLogin()">Sign in</span>
+            </div>
+
+        </div>
+
+        <div class="demo-note">
+            <b>Prototype Mode:</b> ThreatLens AI demonstrates AI analysis,
+            threat prediction, privacy checks and adaptive defense using
+            simulated security events.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+APPLICATION
+========================================================= -->
+
+<div class="app" id="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo">
+                <div class="logo-icon">🛡</div>
+                <span>ThreatLens AI</span>
+            </div>
+        </div>
+
+        <div class="nav">
+
+            <button class="active" data-screen="home">
+                <span class="nav-icon">⌂</span> Dashboard
+            </button>
+
+            <button data-screen="demo">
+                <span class="nav-icon">▶</span> Live Attack Demo
+            </button>
+
+            <button data-screen="soc">
+                <span class="nav-icon">⌁</span> SOC Incident Graph
+            </button>
+
+            <button data-screen="scanner">
+                <span class="nav-icon">⌕</span> Security Scanner
+            </button>
+
+            <button data-screen="privacy">
+                <span class="nav-icon">◈</span> Privacy Guard
+            </button>
+
+            <button data-screen="ai">
+                <span class="nav-icon">✦</span> AI Security Assistant
+            </button>
+
+            <button data-screen="defense">
+                <span class="nav-icon">♢</span> Adaptive Defense Lab
+            </button>
+
+            <button data-screen="intel">
+                <span class="nav-icon">◉</span> Threat Intelligence
+            </button>
+
+            <button data-screen="alerts">
+                <span class="nav-icon">♧</span> Security Alerts
+            </button>
+
+            <button data-screen="settings">
+                <span class="nav-icon">⚙</span> Protection Settings
+            </button>
+
+            <button data-screen="profile">
+                <span class="nav-icon">○</span> Profile
+            </button>
+
+        </div>
+
+        <div class="sidebar-bottom">
+
+            <div class="protection-mini">
+                <strong>● Protection Active</strong><br><br>
+                Predictive engine monitoring simulated security events.
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+
+            <input class="search"
+                   placeholder="Search security features..."
+                   onkeydown="globalSearch(event)">
+
+            <div class="top-actions">
+
+                <button class="icon-btn" onclick="showNotifications()">
+                    🔔
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="profile-chip">
+                    <div class="avatar" id="avatar">ND</div>
+                    <span>Nandana</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div class="content">
+
+
+<!-- =========================================================
+HOME
+========================================================= -->
+
+<section class="screen active" id="screen-home">
+
+    <div class="hero">
+
+        <div>
+
+            <span class="hero-badge">● PROTECTION ACTIVE</span>
+
+            <h1>Your digital world is being watched by your security layer.</h1>
+
+            <p>
+                ThreatLens AI observes digital events, correlates threat signals,
+                predicts possible attacker behavior and recommends adaptive
+                defensive actions.
+            </p>
+
+            <div class="action-row">
+                <button class="analyze-btn" onclick="navigate('scanner')">Run Security Scan →</button>
+                <button class="demo-btn" onclick="navigate('demo')">▶ Live Judge Demo</button>
+                <button class="demo-btn" onclick="navigate('soc')">⌁ SOC Investigation</button>
+            </div>
+
+        </div>
+
+        <div class="score">
+
+            <div class="score-ring">
+                <strong>82</strong>
+            </div>
+
+            <small>Security Score</small>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid grid-4">
+
+        <div class="stat-card">
+            <div class="stat-label">THREATS ANALYZED</div>
+            <div class="stat-value">128</div>
+            <div class="stat-change">↑ 14 this week</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">THREATS BLOCKED</div>
+            <div class="stat-value">24</div>
+            <div class="stat-change">Protection active</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">PRIVACY CHECKS</div>
+            <div class="stat-value">46</div>
+            <div class="stat-change">12 sensitive findings</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">PREDICTIONS</div>
+            <div class="stat-value">37</div>
+            <div class="stat-change">AI threat engine</div>
+        </div>
+
+    </div>
+
+
+    <div class="section">
+
+        <div class="section-header">
+            <h3>Quick Security Actions</h3>
+            <button class="link-btn" onclick="navigate('scanner')">View all</button>
+        </div>
+
+        <div class="grid grid-4">
+
+            <div class="quick-action" onclick="openAnalyzer('link')">
+                <div class="qa-icon">🔗</div>
+                <strong>Check Link</strong>
+                <p>Analyze URLs and redirect behavior.</p>
+            </div>
+
+            <div class="quick-action" onclick="openAnalyzer('message')">
+                <div class="qa-icon">💬</div>
+                <strong>Check Message</strong>
+                <p>Detect phishing and social engineering.</p>
+            </div>
+
+            <div class="quick-action" onclick="openAnalyzer('payment')">
+                <div class="qa-icon">💳</div>
+                <strong>Payment Check</strong>
+                <p>Review suspicious payment requests.</p>
+            </div>
+
+            <div class="quick-action" onclick="navigate('privacy')">
+                <div class="qa-icon">🔐</div>
+                <strong>Privacy Check</strong>
+                <p>Check what data you are about to share.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="demo-launch">
+        <strong>⚡ Judge Mode — Run the complete research workflow</strong>
+        <p>One-click demonstration of detection → correlation → prediction → alert → adaptive defense → threat intelligence.</p>
+        <button class="demo-btn" onclick="navigate('demo');setTimeout(runLiveDemo,250)">▶ Launch Live Attack Demo</button>
+    </div>
+
+
+    <div class="grid grid-2 section">
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>Recent Security Alerts</h3>
+                <button class="link-btn" onclick="navigate('alerts')">View all</button>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon red">⚠</div>
+                <div class="alert-content">
+                    <strong>Suspicious payment link</strong>
+                    <p>Potential financial phishing pattern detected.</p>
+                </div>
+                <span class="badge high">HIGH</span>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon yellow">!</div>
+                <div class="alert-content">
+                    <strong>Unusual app permissions</strong>
+                    <p>Permission-purpose mismatch detected.</p>
+                </div>
+                <span class="badge medium">MEDIUM</span>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon blue">i</div>
+                <div class="alert-content">
+                    <strong>Privacy review completed</strong>
+                    <p>No critical sensitive data found.</p>
+                </div>
+                <span class="badge low">INFO</span>
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>AI Threat Forecast</h3>
+                <span class="badge medium">NEXT 24H</span>
+            </div>
+
+            <div class="campaign">
+
+                <strong style="color:var(--purple)">
+                    ✦ Predicted Attack Pattern
+                </strong>
+
+                <p style="font-size:12px;color:#a9b4c5;margin-top:10px;line-height:1.7;">
+                    A combination of suspicious messages, external links
+                    and payment-related language indicates a possible
+                    social-engineering sequence.
+                </p>
+
+                <div style="margin-top:13px">
+                    <span class="signal">Message</span>
+                    <span class="signal">URL</span>
+                    <span class="signal">Payment</span>
+                    <span class="signal">Credential Request</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+SCANNER
+========================================================= -->
+
+
+<!-- =========================================================
+SOC INCIDENT RECONSTRUCTION — HACKATHON UPGRADE
+========================================================= -->
+<section class="screen" id="screen-soc">
+    <div class="page-title">
+        <div>
+            <h2>SOC Incident Reconstruction</h2>
+            <p>Correlate fragmented telemetry across hosts, reconstruct the attack chain and predict the next target.</p>
+        </div>
+        <span class="badge high">SOC SIMULATION</span>
+    </div>
+
+    <div class="soc-hero">
+        <div>
+            <span class="demo-status"><span class="pulse-dot"></span> MULTI-HOST INCIDENT ENGINE</span>
+            <h2 style="font-family:'Space Grotesk';font-size:24px;margin-top:12px">From disconnected logs to one explainable incident</h2>
+            <p style="color:var(--muted);font-size:11px;line-height:1.65;margin-top:7px;max-width:820px">
+                ThreatLens AI ingests simulated authentication, DNS and endpoint-process telemetry, links events across machines,
+                maps evidence to MITRE ATT&amp;CK techniques, identifies lateral movement and estimates the most likely next target asset.
+            </p>
+        </div>
+        <div class="soc-actions">
+            <button class="primary" onclick="runSOCIncident()">▶ Reconstruct Incident</button>
+            <button onclick="resetSOCIncident()">↺ Reset</button>
+        </div>
+    </div>
+
+    <div class="soc-kpis">
+        <div class="stat-card"><div class="stat-label">HOSTS CORRELATED</div><div class="stat-value" id="socHosts">0 / 6</div><div class="stat-change">Cross-host evidence</div></div>
+        <div class="stat-card"><div class="stat-label">ATT&amp;CK TECHNIQUES</div><div class="stat-value" id="socTechniques">0</div><div class="stat-change">Evidence-backed mapping</div></div>
+        <div class="stat-card"><div class="stat-label">LATERAL MOVEMENT</div><div class="stat-value" id="socLateral">STANDBY</div><div class="stat-change">Cross-host pivot state</div></div>
+        <div class="stat-card"><div class="stat-label">NEXT TARGET</div><div class="stat-value" id="socNext">—</div><div class="stat-change" id="socNextSub">Prediction pending</div></div>
+    </div>
+
+    <div class="soc-grid">
+        <div class="soc-panel">
+            <div class="section-header"><h3>Telemetry Ingestion</h3><span class="badge low" id="socTelemetryBadge">WAITING</span></div>
+            <div class="telemetry-tabs">
+                <button class="telemetry-tab active" data-type="auth">AUTH LOGS</button>
+                <button class="telemetry-tab" data-type="dns">DNS</button>
+                <button class="telemetry-tab" data-type="process">PROCESS TREE</button>
+            </div>
+            <div class="telemetry-stream" id="socTelemetryStream">
+                <div class="empty-state">Press <b>Reconstruct Incident</b> to stream fragmented telemetry.</div>
+            </div>
+        </div>
+
+        <div class="soc-panel">
+            <div class="section-header"><h3>Incident Graph</h3><span class="badge medium" id="socGraphState">DISCONNECTED</span></div>
+            <div class="incident-graph-wrap">
+                <svg class="incident-graph" id="incidentGraph" viewBox="0 0 760 390" role="img" aria-label="Interactive simulated incident graph">
+                    <defs>
+                        <marker id="socArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#4f6583"/></marker>
+                    </defs>
+                    <g id="graphEdges"></g><g id="graphNodes"></g>
+                </svg>
+            </div>
+            <div class="graph-legend"><span>● compromised</span><span>● suspicious</span><span>● predicted target</span><span>● root cause</span></div>
+        </div>
+    </div>
+
+    <div class="soc-grid">
+        <div class="soc-panel">
+            <div class="section-header"><h3>Reconstructed Attack Chain</h3><span class="badge high" id="socChainState">ANALYZING</span></div>
+            <div class="attack-chain soc-chain" id="socChain">
+                <span class="chain-node current">Initial Access</span><span class="chain-arrow">→</span>
+                <span class="chain-node">Execution</span><span class="chain-arrow">→</span>
+                <span class="chain-node">Credential Access</span><span class="chain-arrow">→</span>
+                <span class="chain-node">Discovery</span><span class="chain-arrow">→</span>
+                <span class="chain-node">Lateral Movement</span>
+            </div>
+            <div class="soc-evidence" id="socEvidence">
+                <div><b>Root-cause entry point</b><span>Pending correlation</span></div>
+                <div><b>Current attacker stage</b><span>Pending correlation</span></div>
+                <div><b>Why lateral movement?</b><span>Pending cross-host evidence</span></div>
+            </div>
+        </div>
+
+        <div class="soc-panel next-target-panel">
+            <div class="section-header"><h3>Predicted Next Target</h3><span class="badge medium">EXPLAINABLE</span></div>
+            <div class="target-orbit"><div class="orbit-ring"></div><div class="target-core" id="targetCore">?</div></div>
+            <h3 id="socTargetName">Prediction pending</h3>
+            <p id="socTargetReason">The engine will compare reachable assets, recent authentication evidence and asset criticality.</p>
+            <div class="prediction-meter"><span id="socPredictionMeter"></span></div>
+            <div class="confidence-row"><span>Prediction confidence</span><strong id="socPredictionConfidence">—</strong></div>
+        </div>
+    </div>
+
+    <div class="soc-panel">
+        <div class="section-header"><h3>MITRE ATT&amp;CK Evidence Map</h3><span class="badge low">SIMULATED MAPPING</span></div>
+        <div class="attack-techniques" id="socTechCards">
+            <div class="empty-state">ATT&amp;CK mappings will appear as telemetry is correlated.</div>
+        </div>
+    </div>
+
+    <div class="soc-console" id="socConsole" aria-live="polite">
+        <div><span class="time">[00:00:00]</span> <span class="tag console-cyan">SOC</span> Incident reconstruction engine ready.</div>
+    </div>
+</section>
+
+<section class="screen" id="screen-scanner">
+
+    <div class="page-title">
+        <div>
+            <h2>Security Scanner</h2>
+            <p>Analyze the digital events you interact with every day.</p>
+        </div>
+    </div>
+
+    <div class="scan-grid">
+
+        <div class="scan-card" onclick="openAnalyzer('link')">
+            <span>→</span>
+            <div class="big-icon">🔗</div>
+            <h3>Link & Website</h3>
+            <p>Check suspicious URLs, redirects and phishing indicators.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('message')">
+            <span>→</span>
+            <div class="big-icon">💬</div>
+            <h3>Message</h3>
+            <p>Analyze SMS, chats and copied messages for social engineering.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('email')">
+            <span>→</span>
+            <div class="big-icon">📧</div>
+            <h3>Email Intelligence</h3>
+            <p>Detect spam, phishing, urgency and suspicious requests.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('phone')">
+            <span>→</span>
+            <div class="big-icon">📞</div>
+            <h3>Phone / Call</h3>
+            <p>Analyze suspicious caller patterns and reported numbers.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('payment')">
+            <span>→</span>
+            <div class="big-icon">💳</div>
+            <h3>Payment Security</h3>
+            <p>Review UPI, payment links and unusual payment requests.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('app')">
+            <span>→</span>
+            <div class="big-icon">📱</div>
+            <h3>Application Security</h3>
+            <p>Analyze application reputation and simulated metadata.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('permission')">
+            <span>→</span>
+            <div class="big-icon">🔑</div>
+            <h3>Permission Intelligence</h3>
+            <p>Detect excessive or unusual application permissions.</p>
+        </div>
+
+        <div class="scan-card" onclick="openAnalyzer('notification')">
+            <span>→</span>
+            <div class="big-icon">🔔</div>
+            <h3>Notification Intelligence</h3>
+            <p>Predict phishing and scam notifications before interaction.</p>
+        </div>
+
+        <div class="scan-card" onclick="navigate('defense')">
+            <span>→</span>
+            <div class="big-icon">🍯</div>
+            <h3>Attack Simulation</h3>
+            <p>Observe simulated attacker behavior and adaptive defense.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+ANALYZER
+========================================================= -->
+
+<section class="screen" id="screen-analyzer">
+
+    <div class="analyzer">
+
+        <button class="back-btn" onclick="navigate('scanner')">
+            ← Back to Scanner
+        </button>
+
+        <div class="analyzer-box">
+
+            <div id="analyzerIcon" style="font-size:30px">🔍</div>
+
+            <h3 id="analyzerTitle">Security Analyzer</h3>
+
+            <p id="analyzerDescription">
+                Analyze a digital event using ThreatLens AI threat intelligence.
+            </p>
+
+            <div id="dynamicInput"></div>
+
+            <button class="analyze-btn" onclick="runAnalysis()">
+                ✦ Analyze with ThreatLens AI AI
+            </button>
+
+            <div class="analysis-result" id="analysisResult">
+
+                <div class="risk-banner">
+
+                    <div>
+                        <small style="color:#8491a5">AI RISK ASSESSMENT</small>
+                        <h3 id="resultTitle">High Risk</h3>
+                    </div>
+
+                    <div class="risk-number" id="riskNumber">87</div>
+
+                </div>
+
+                <div class="section">
+
+                    <div class="section-header">
+                        <h3>Detected Indicators</h3>
+                    </div>
+
+                    <div id="reasons"></div>
+
+                </div>
+
+                <div class="prediction">
+
+                    <strong>✦ Predicted Next Action</strong>
+
+                    <p id="nextAction"
+                       style="font-size:12px;color:#aab5c8;margin-top:8px;line-height:1.7">
+                    </p>
+
+                </div>
+
+                <div class="prediction"
+                     style="background:rgba(53,226,154,.05);border-color:rgba(53,226,154,.12)">
+
+                    <strong style="color:var(--green)">
+                        🛡 Recommended Defense
+                    </strong>
+
+                    <p id="recommendation"
+                       style="font-size:12px;color:#aab5c8;margin-top:8px;line-height:1.7">
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+PRIVACY GUARD
+========================================================= -->
+
+<section class="screen" id="screen-privacy">
+
+    <div class="page-title">
+        <div>
+            <h2>Privacy Guard</h2>
+            <p>Know what data you are sharing, installing or exposing.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-3">
+
+        <div class="privacy-card" onclick="openAnalyzer('share')">
+            <div class="privacy-icon">📤</div>
+            <h3>Before You Share</h3>
+            <p>
+                Scan text before sending it to websites, AI platforms,
+                forms or other services.
+            </p>
+            <span class="privacy-risk blue">PRIVACY CHECK</span>
+        </div>
+
+        <div class="privacy-card" onclick="openAnalyzer('download')">
+            <div class="privacy-icon">📥</div>
+            <h3>Download Guard</h3>
+            <p>
+                Examine files, links and suspicious download sources
+                before opening them.
+            </p>
+            <span class="privacy-risk yellow">DOWNLOAD PROTECTION</span>
+        </div>
+
+        <div class="privacy-card" onclick="openAnalyzer('app')">
+            <div class="privacy-icon">📱</div>
+            <h3>App Privacy</h3>
+            <p>
+                Check whether requested application permissions match
+                the application's expected purpose.
+            </p>
+            <span class="privacy-risk red">PERMISSION REVIEW</span>
+        </div>
+
+        <div class="privacy-card" onclick="sensorCheck()">
+            <div class="privacy-icon">📷</div>
+            <h3>Camera & Microphone</h3>
+            <p>
+                Review recent sensor-access events where supported by
+                the operating system.
+            </p>
+            <span class="privacy-risk green">SENSOR MONITOR</span>
+        </div>
+
+        <div class="privacy-card" onclick="openAnalyzer('data')">
+            <div class="privacy-icon">🧬</div>
+            <h3>Data Exposure Scanner</h3>
+            <p>
+                Detect possible personal identifiers, credentials,
+                tokens and sensitive information.
+            </p>
+            <span class="privacy-risk purple">AI PRIVACY ANALYSIS</span>
+        </div>
+
+        <div class="privacy-card" onclick="showPrivacyReport()">
+            <div class="privacy-icon">📊</div>
+            <h3>Privacy Report</h3>
+            <p>
+                Review your recent privacy checks and exposed-data
+                categories.
+            </p>
+            <span class="privacy-risk blue">VIEW REPORT</span>
+        </div>
+
+    </div>
+
+
+    <div class="card section">
+
+        <div class="section-header">
+            <h3>Recent Privacy Events</h3>
+            <span class="badge low">MONITORING</span>
+        </div>
+
+        <div class="alert-item">
+            <div class="alert-icon purple">◈</div>
+            <div class="alert-content">
+                <strong>Personal information detected</strong>
+                <p>Phone number found in a simulated upload.</p>
+            </div>
+            <span class="badge medium">REVIEW</span>
+        </div>
+
+        <div class="alert-item">
+            <div class="alert-icon green">✓</div>
+            <div class="alert-content">
+                <strong>No credential exposure</strong>
+                <p>Latest privacy scan completed.</p>
+            </div>
+            <span class="badge low">CLEAR</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+AI ASSISTANT
+========================================================= -->
+
+<section class="screen" id="screen-ai">
+
+    <div class="page-title">
+        <div>
+            <h2>AI Security Assistant</h2>
+            <p>Ask ThreatLens AI about suspicious digital activity.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+
+        <div class="card chat-box">
+
+            <div class="chat-messages" id="chatMessages">
+
+                <div class="chat ai">
+                    👋 Hi! I'm ThreatLens AI AI.
+                    I can explain security alerts, privacy risks,
+                    suspicious links, payment requests and predicted
+                    attack behavior.
+                </div>
+
+                <div class="chat ai">
+                    Try asking:
+                    <br><br>
+                    <b>"Is this message suspicious?"</b>
+                    <br>
+                    <b>"Why is this app requesting contacts?"</b>
+                    <br>
+                    <b>"What could happen next?"</b>
+                </div>
+
+            </div>
+
+            <div class="chat-input">
+                <input id="chatInput" placeholder="Ask a security question..."
+                       onkeydown="if(event.key==='Enter')sendChat()">
+                <button onclick="sendChat()">➤</button>
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>AI Capabilities</h3>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon blue">◉</div>
+                <div class="alert-content">
+                    <strong>Threat Classification</strong>
+                    <p>Analyzes behavioral and contextual signals.</p>
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon purple">✦</div>
+                <div class="alert-content">
+                    <strong>Attack Prediction</strong>
+                    <p>Estimates the next stage in a simulated attack chain.</p>
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon green">♢</div>
+                <div class="alert-content">
+                    <strong>Adaptive Defense</strong>
+                    <p>Recommends a response based on observed risk.</p>
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon yellow">◈</div>
+                <div class="alert-content">
+                    <strong>Privacy Reasoning</strong>
+                    <p>Explains potential data-exposure risks.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+ADAPTIVE DEFENSE LAB
+========================================================= -->
+
+<section class="screen" id="screen-defense">
+
+    <div class="page-title">
+
+        <div>
+            <h2>Adaptive Defense Lab</h2>
+            <p>
+                Controlled simulation of attacker behavior,
+                prediction and adaptive cyber deception.
+            </p>
+        </div>
+
+        <span class="badge medium">SIMULATION MODE</span>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-header">
+            <h3>Attack Progression</h3>
+            <span id="attackStatus" class="badge low">READY</span>
+        </div>
+
+        <div class="attack-flow">
+
+            <div class="flow-node active" id="flow1">
+                <span>👁</span>
+                <strong>Observe</strong>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node" id="flow2">
+                <span>🧠</span>
+                <strong>Predict</strong>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node" id="flow3">
+                <span>🍯</span>
+                <strong>Adaptive Honeypot</strong>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node" id="flow4">
+                <span>📡</span>
+                <strong>Collect Intel</strong>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node" id="flow5">
+                <span>🛡</span>
+                <strong>Defend</strong>
+            </div>
+
+        </div>
+
+        <button class="analyze-btn" onclick="startAttackSimulation()">
+            ▶ Start Attack Simulation
+        </button>
+
+    </div>
+
+
+    <div class="grid grid-2 section">
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>Simulation Console</h3>
+                <span class="badge low">LIVE</span>
+            </div>
+
+            <div class="sim-console" id="console">
+
+                <div class="console-cyan">
+                    [ThreatLens AI] Adaptive Defense Engine initialized.
+                </div>
+
+                <div>
+                    [System] Waiting for simulated threat...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>Threat Intelligence Collected</h3>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon red">!</div>
+                <div class="alert-content">
+                    <strong>Credential probing</strong>
+                    <p>Simulated behavior signal</p>
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon purple">◉</div>
+                <div class="alert-content">
+                    <strong>Attack sequence</strong>
+                    <p>Recon → credential request</p>
+                </div>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-icon blue">◇</div>
+                <div class="alert-content">
+                    <strong>Adaptive response</strong>
+                    <p>Decoy environment activated</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+THREAT INTELLIGENCE
+========================================================= -->
+
+<section class="screen" id="screen-intel">
+
+    <div class="page-title">
+
+        <div>
+            <h2>Threat Intelligence</h2>
+            <p>
+                Correlating multiple security signals to identify
+                emerging threat patterns.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="grid grid-4">
+
+        <div class="stat-card">
+            <div class="stat-label">SIGNALS CORRELATED</div>
+            <div class="stat-value">348</div>
+            <div class="stat-change">Multi-channel</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">CAMPAIGNS</div>
+            <div class="stat-value">17</div>
+            <div class="stat-change">Simulated clusters</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">NEW INDICATORS</div>
+            <div class="stat-value">64</div>
+            <div class="stat-change">This month</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">PREDICTIONS</div>
+            <div class="stat-value">37</div>
+            <div class="stat-change">AI engine</div>
+        </div>
+
+    </div>
+
+
+    <div class="card section">
+
+        <div class="section-header">
+            <h3>Emerging Campaign Correlation</h3>
+            <span class="badge high">HIGH SIGNAL</span>
+        </div>
+
+        <div class="campaign">
+
+            <strong style="font-size:15px;color:var(--purple)">
+                Possible Social Engineering Campaign
+            </strong>
+
+            <p style="color:#9caac0;font-size:11px;line-height:1.7;margin-top:8px">
+                ThreatLens AI detected overlapping characteristics across
+                simulated messages, links and payment requests.
+            </p>
+
+            <div style="margin-top:12px">
+
+                <span class="signal">Urgency language</span>
+                <span class="signal">External URL</span>
+                <span class="signal">Credential request</span>
+                <span class="signal">Payment request</span>
+                <span class="signal">Unknown sender</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card section">
+
+        <div class="section-header">
+            <h3>Threat Signal Database</h3>
+            <button class="link-btn" onclick="showToast('Threat intelligence refreshed')">
+                Refresh
+            </button>
+        </div>
+
+        <table class="threat-table">
+
+            <thead>
+                <tr>
+                    <th>THREAT</th>
+                    <th>CHANNEL</th>
+                    <th>RISK</th>
+                    <th>PREDICTED ACTION</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Credential phishing</td>
+                    <td>Web</td>
+                    <td><span class="badge high">HIGH</span></td>
+                    <td>Credential collection</td>
+                </tr>
+
+                <tr>
+                    <td>Fake payment request</td>
+                    <td>UPI</td>
+                    <td><span class="badge high">HIGH</span></td>
+                    <td>Financial theft attempt</td>
+                </tr>
+
+                <tr>
+                    <td>Malicious APK</td>
+                    <td>Download</td>
+                    <td><span class="badge high">HIGH</span></td>
+                    <td>Permission abuse</td>
+                </tr>
+
+                <tr>
+                    <td>Social engineering</td>
+                    <td>Message</td>
+                    <td><span class="badge medium">MEDIUM</span></td>
+                    <td>Link interaction</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+ALERTS
+========================================================= -->
+
+<section class="screen" id="screen-alerts">
+
+    <div class="page-title">
+
+        <div>
+            <h2>Security Alerts</h2>
+            <p>Security events requiring your attention.</p>
+        </div>
+
+        <button class="analyze-btn" onclick="clearAlerts()">
+            Clear read alerts
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="alert-item">
+            <div class="alert-icon red">⚠</div>
+            <div class="alert-content">
+                <strong>Potential phishing payment link</strong>
+                <p>Payment request contains suspicious characteristics.</p>
+                <small>2 minutes ago</small>
+            </div>
+            <span class="badge high">HIGH</span>
+        </div>
+
+        <div class="alert-item">
+            <div class="alert-icon yellow">!</div>
+            <div class="alert-content">
+                <strong>Application permission mismatch</strong>
+                <p>Contacts and microphone requested by a simulated flashlight application.</p>
+                <small>18 minutes ago</small>
+            </div>
+            <span class="badge medium">MEDIUM</span>
+        </div>
+
+        <div class="alert-item">
+            <div class="alert-icon purple">◈</div>
+            <div class="alert-content">
+                <strong>Sensitive information detected</strong>
+                <p>A phone number was detected before simulated data sharing.</p>
+                <small>1 hour ago</small>
+            </div>
+            <span class="badge medium">REVIEW</span>
+        </div>
+
+        <div class="alert-item">
+            <div class="alert-icon blue">✦</div>
+            <div class="alert-content">
+                <strong>Attack prediction updated</strong>
+                <p>AI predicts possible credential collection as the next stage.</p>
+                <small>2 hours ago</small>
+            </div>
+            <span class="badge low">INFO</span>
+        </div>
+
+        <div class="alert-item">
+            <div class="alert-icon green">✓</div>
+            <div class="alert-content">
+                <strong>Security scan completed</strong>
+                <p>No critical indicators found in the simulated scan.</p>
+                <small>3 hours ago</small>
+            </div>
+            <span class="badge low">CLEAR</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+SETTINGS
+========================================================= -->
+
+<section class="screen" id="screen-settings">
+
+    <div class="page-title">
+
+        <div>
+            <h2>Protection Settings</h2>
+            <p>Control your ThreatLens AI security layer.</p>
+        </div>
+
+    </div>
+
+
+    <div class="grid grid-2">
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>Threat Protection</h3>
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">🛡</div>
+                    <div>
+                        <strong>Real-Time Protection</strong>
+                        <p>Monitor supported security events.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">🔗</div>
+                    <div>
+                        <strong>Link Protection</strong>
+                        <p>Analyze suspicious URLs.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">💬</div>
+                    <div>
+                        <strong>Message Intelligence</strong>
+                        <p>Detect phishing and social engineering.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">💳</div>
+                    <div>
+                        <strong>Payment Protection</strong>
+                        <p>Review suspicious payment requests.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-header">
+                <h3>Privacy Protection</h3>
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">📤</div>
+                    <div>
+                        <strong>Before-Share Check</strong>
+                        <p>Review sensitive information.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">📱</div>
+                    <div>
+                        <strong>Permission Guard</strong>
+                        <p>Identify unusual app permissions.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">📷</div>
+                    <div>
+                        <strong>Sensor Privacy Alerts</strong>
+                        <p>Review supported camera/microphone access events.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+            <div class="setting">
+
+                <div class="setting-info">
+                    <div class="setting-icon">🍯</div>
+                    <div>
+                        <strong>Adaptive Defense Lab</strong>
+                        <p>Enable controlled attack simulations.</p>
+                    </div>
+                </div>
+
+                <div class="switch on" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card section">
+
+        <div class="section-header">
+            <h3>Security Philosophy</h3>
+        </div>
+
+        <p style="color:#8997ac;font-size:12px;line-height:1.8">
+            ThreatLens AI follows a prevention-first approach:
+            understand the digital event, identify risk indicators,
+            predict possible consequences, explain the reasoning and
+            allow the user to make an informed decision.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+PROFILE
+========================================================= -->
+
+<section class="screen" id="screen-profile">
+
+    <div class="page-title">
+        <div>
+            <h2>Profile</h2>
+            <p>Your ThreatLens AI security profile.</p>
+        </div>
+    </div>
+
+
+    <div class="profile-header">
+
+        <div class="big-avatar">ND</div>
+
+        <div>
+            <h3>Nandana Devi</h3>
+            <p>Student • Security Researcher</p>
+            <p style="color:var(--green);margin-top:7px">
+                ● Protection Active
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="grid grid-3 section">
+
+        <div class="stat-card">
+            <div class="stat-label">SECURITY SCORE</div>
+            <div class="stat-value">82%</div>
+            <div class="stat-change">Good protection coverage</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">SCANS COMPLETED</div>
+            <div class="stat-value">128</div>
+            <div class="stat-change">Across 7 channels</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">PRIVACY REVIEWS</div>
+            <div class="stat-value">46</div>
+            <div class="stat-change">12 sensitive findings</div>
+        </div>
+
+    </div>
+
+
+    <div class="card section">
+
+        <div class="section-header">
+            <h3>Account Actions</h3>
+        </div>
+
+        <button class="link-btn"
+                style="padding:13px 0;display:block"
+                onclick="showToast('Profile settings opened')">
+            Edit security profile →
+        </button>
+
+        <button class="link-btn"
+                style="padding:13px 0;display:block"
+                onclick="showToast('Security report generated')">
+            Generate security report →
+        </button>
+
+        <button class="link-btn"
+                style="padding:13px 0;display:block"
+                onclick="logout()">
+            Sign out →
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+LIVE ATTACK DEMO / JUDGE MODE
+========================================================= -->
+<section class="screen" id="screen-demo">
+
+    <div class="page-title">
+        <div>
+            <h2>Live Attack Demo</h2>
+            <p>Judge-ready walkthrough of the complete ThreatLens AI predictive defense loop.</p>
+        </div>
+        <span class="badge high">CONTROLLED SIMULATION</span>
+    </div>
+
+    <div class="live-demo-hero">
+        <span class="demo-status"><span class="pulse-dot"></span> LIVE DEMO ENGINE</span>
+        <h2 style="font-family:'Space Grotesk';font-size:25px;margin-top:12px">
+            From suspicious message to adaptive defense
+        </h2>
+        <p style="color:var(--muted);font-size:11px;line-height:1.6;margin-top:7px;max-width:760px">
+            Select a scenario and run it. ThreatLens AI will demonstrate observation,
+            multi-signal correlation, explainable risk scoring, next-action prediction,
+            user alerting, controlled deception and threat-intelligence collection.
+        </p>
+
+        <div class="demo-toolbar">
+            <button class="scenario-btn active" data-scenario="phishing" onclick="selectDemoScenario('phishing',this)">🎣 Phishing Chain</button>
+            <button class="scenario-btn" data-scenario="payment" onclick="selectDemoScenario('payment',this)">💳 Payment Scam</button>
+            <button class="scenario-btn" data-scenario="privacy" onclick="selectDemoScenario('privacy',this)">🔐 Privacy Exposure</button>
+            <button class="scenario-btn" data-scenario="app" onclick="selectDemoScenario('app',this)">📱 Malicious App</button>
+        </div>
+
+        <div class="action-row">
+            <button class="primary" onclick="runLiveDemo()">▶ Run Full Attack Simulation</button>
+            <button onclick="resetLiveDemo()">↺ Reset</button>
+            <button onclick="showDemoReport()">▣ Explain Incident</button>
+        </div>
+    </div>
+
+    <div class="live-visual">
+        <div class="live-visual-head">
+            <div><h3>What ThreatLens is actually doing</h3><p>The incident moves through the security pipeline in real time. Each panel changes as the attack progresses.</p></div>
+            <span id="visualState" class="badge low">WAITING FOR EVENT</span>
+        </div>
+
+        <div class="visual-stage">
+            <div class="visual-node" id="visualSource">
+                <div class="visual-label">ATTACK SOURCE</div><div class="visual-icon" id="visualSourceIcon">📱</div>
+                <strong id="visualSourceTitle">Suspicious message</strong>
+                <p id="visualSourceText">A digital event is waiting to enter the observation layer.</p>
+            </div>
+            <div class="visual-arrow" id="visualArrow1">→</div>
+            <div class="visual-node" id="visualEngine">
+                <div class="visual-label">THREATLENS ENGINE</div><div class="visual-icon">🧠</div>
+                <strong id="visualEngineTitle">AI analysis idle</strong>
+                <p id="visualEngineText">Signals will be observed, correlated and used to estimate the next attacker action.</p>
+                <div class="signal-strip" id="visualSignals"><span class="signal-pill">message</span><span class="signal-pill">URL</span><span class="signal-pill">context</span></div>
+            </div>
+            <div class="visual-arrow" id="visualArrow2">→</div>
+            <div class="visual-node" id="visualDefense">
+                <div class="visual-label">DEFENSE RESPONSE</div><div class="visual-icon">🛡️</div>
+                <strong id="visualDefenseTitle">Defense standby</strong>
+                <p id="visualDefenseText">The system will alert the user and, in this controlled demo, activate simulated adaptive deception.</p>
+            </div>
+        </div>
+
+        <div class="event-card" id="visualEvent">
+            <div class="event-line"><span class="event-key">EVENT</span><span class="event-value">Waiting for a simulated incident...</span></div>
+            <div class="event-line"><span class="event-key">ANALYSIS</span><span class="event-value">No active threat signal</span></div>
+            <div class="event-line"><span class="event-key">NEXT ACTION</span><span class="event-value">Awaiting observation</span></div>
+        </div>
+        <div class="honeypot-visual" id="honeypotVisual"><strong>🕸️ CONTROLLED HONEYPOT ACTIVE</strong><p>Simulated attacker interaction is being captured here. This demonstrates the adaptive-defense workflow; it is not a real exposed honeypot.</p></div>
+    </div>
+
+    <div class="demo-grid">
+
+        <div class="attack-story">
+            <div class="section-header">
+                <h3>Attack Timeline</h3>
+                <span id="demoStageBadge" class="badge low">READY</span>
+            </div>
+
+            <div class="timeline" id="demoTimeline">
+                <div class="timeline-item" data-step="0">
+                    <span class="timeline-time">01</span>
+                    <strong>Observation</strong>
+                    <p>Digital event enters the ThreatLens AI observation layer.</p>
+                </div>
+                <div class="timeline-item" data-step="1">
+                    <span class="timeline-time">02</span>
+                    <strong>Correlation</strong>
+                    <p>Weak signals are connected into a possible attack sequence.</p>
+                </div>
+                <div class="timeline-item" data-step="2">
+                    <span class="timeline-time">03</span>
+                    <strong>Prediction</strong>
+                    <p>The engine estimates a plausible next attacker action.</p>
+                </div>
+                <div class="timeline-item" data-step="3">
+                    <span class="timeline-time">04</span>
+                    <strong>User Alert</strong>
+                    <p>The risk, evidence and recommended action are shown.</p>
+                </div>
+                <div class="timeline-item" data-step="4">
+                    <span class="timeline-time">05</span>
+                    <strong>Adaptive Defense</strong>
+                    <p>A controlled deception environment is activated for the demo.</p>
+                </div>
+                <div class="timeline-item" data-step="5">
+                    <span class="timeline-time">06</span>
+                    <strong>Threat Intelligence</strong>
+                    <p>Observed indicators are converted into reusable intelligence.</p>
+                </div>
+            </div>
+
+            <div class="attack-chain" id="demoAttackChain"></div>
+        </div>
+
+        <div class="prediction-card">
+            <div class="section-header">
+                <h3>AI Next-Action Prediction</h3>
+                <span class="badge medium">EXPLAINABLE</span>
+            </div>
+
+            <div style="margin-top:13px">
+                <small style="color:#718199;font-size:9px">CURRENT RISK</small>
+                <div style="display:flex;align-items:end;gap:8px">
+                    <strong id="demoRisk" style="font-size:38px;color:var(--red)">87</strong>
+                    <span style="font-size:10px;color:var(--muted);margin-bottom:7px">/ 100</span>
+                </div>
+            </div>
+
+            <div class="prediction-meter"><span id="predictionMeter"></span></div>
+            <div class="confidence-row"><span>Prediction confidence</span><strong id="demoConfidence">87%</strong></div>
+
+            <div class="card" style="padding:13px;margin-top:14px;background:#08111e">
+                <small style="color:#718199;font-size:9px">PREDICTED NEXT ACTION</small>
+                <strong id="demoPrediction" style="display:block;font-size:13px;color:var(--purple);margin-top:6px">
+                    Credential collection
+                </strong>
+                <p id="demoPredictionWhy" style="font-size:10px;color:#9caac0;line-height:1.55;margin-top:6px">
+                    Urgency + external link + credential request create a correlated social-engineering pattern.
+                </p>
+            </div>
+
+            <div class="reason-grid" id="demoIndicators">
+                <div class="indicator"><b>Urgency</b>Pressure language</div>
+                <div class="indicator"><b>External URL</b>Untrusted destination</div>
+                <div class="indicator"><b>Credential request</b>Login information requested</div>
+                <div class="indicator"><b>Payment context</b>Possible financial escalation</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="demo-grid">
+
+        <div class="incident-card">
+            <div class="section-header">
+                <h3>Live Security Console</h3>
+                <span class="badge low">EVENT STREAM</span>
+            </div>
+            <div class="demo-console" id="demoConsole">
+                <div class="log-line" style="opacity:1"><span class="time">[00:00:00]</span> <span class="tag console-cyan">SYSTEM</span> ThreatLens AI demo engine ready.</div>
+                <div class="log-line" style="opacity:1"><span class="time">[00:00:01]</span> <span class="tag">WAIT</span> Select a scenario and run the simulation.</div>
+            </div>
+
+            <div class="demo-progress">
+                <div class="progress-label"><span>Defense loop progress</span><strong id="demoProgressText">0%</strong></div>
+                <div class="progress-track"><div class="progress-fill" id="demoProgress"></div></div>
+            </div>
+        </div>
+
+        <div class="incident-card">
+            <div class="section-header">
+                <h3>Threat Intelligence Memory</h3>
+                <span class="badge purple">CORRELATION</span>
+            </div>
+            <div id="demoIntel">
+                <div class="intel-card">
+                    <div class="intel-icon">◉</div>
+                    <div><strong>Waiting for incident</strong><p>Collected signals will appear here during the simulation.</p></div>
+                </div>
+            </div>
+
+            <div class="score-compare">
+                <div class="score-box"><strong id="beforeScore">82</strong><small>BEFORE INCIDENT</small></div>
+                <div class="score-arrow">→</div>
+                <div class="score-box"><strong id="afterScore" style="color:var(--green)">94</strong><small>AFTER DEFENSE</small></div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+        </div>
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+MODAL
+========================================================= -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-top">
+            <div style="font-size:28px" id="modalIcon">⚠</div>
+            <button class="close" onclick="closeModal()">×</button>
+        </div>
+
+        <h3 id="modalTitle">Security Alert</h3>
+
+        <p id="modalText">
+            ThreatLens AI detected a suspicious event.
+        </p>
+
+        <div class="modal-actions">
+
+            <button onclick="closeModal()">
+                Review
+            </button>
+
+            <button class="danger" onclick="closeModal();showToast('Action blocked in simulation')">
+                Block / Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast">
+    <strong>ThreatLens AI</strong>
+    <span id="toastText">Security event detected.</span>
+</div>
+
+
+<script>
+
+/* =========================================================
+AUTH
+========================================================= */
+
+function showRegister(){
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("registerForm").classList.remove("hidden");
+}
+
+function showLogin(){
+    document.getElementById("registerForm").classList.add("hidden");
+    document.getElementById("loginForm").classList.remove("hidden");
+}
+
+function login(){
+
+    const name =
+        document.getElementById("registerName")?.value ||
+        "Nandana";
+
+    document.getElementById("avatar").textContent =
+        name.substring(0,2).toUpperCase();
+
+    document.getElementById("authScreen").style.display="none";
+    document.getElementById("app").classList.add("active");
+
+    showToast("Secure session established");
+}
+
+function logout(){
+
+    document.getElementById("app").classList.remove("active");
+    document.getElementById("authScreen").style.display="flex";
+
+    showToast("Signed out securely");
+}
+
+
+/* =========================================================
+NAVIGATION
+========================================================= */
+
+function navigate(screen){
+
+    document.querySelectorAll(".screen")
+        .forEach(s=>s.classList.remove("active"));
+
+    const target=document.getElementById("screen-"+screen);
+
+    if(target){
+        target.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav button")
+        .forEach(btn=>{
+            btn.classList.toggle(
+                "active",
+                btn.dataset.screen===screen
+            );
+        });
+
+    document.getElementById("sidebar").classList.remove("open");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+document.querySelectorAll(".nav button").forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        navigate(button.dataset.screen);
+
+    });
+
+});
+
+
+function toggleSidebar(){
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* =========================================================
+ANALYZER
+========================================================= */
+
+let currentAnalyzer="link";
+
+
+const analyzerData={
+
+    link:{
+        icon:"🔗",
+        title:"Link & Website Security",
+        description:"Paste a URL to simulate a phishing, redirect and reputation analysis.",
+        placeholder:"https://example.com"
+    },
+
+    message:{
+        icon:"💬",
+        title:"Message Intelligence",
+        description:"Paste a message and ThreatLens AI will analyze social-engineering indicators.",
+        placeholder:"Paste suspicious message here..."
+    },
+
+    email:{
+        icon:"📧",
+        title:"Email Intelligence",
+        description:"Analyze an email for phishing, spam, urgency and suspicious requests.",
+        placeholder:"Paste email content here..."
+    },
+
+    phone:{
+        icon:"📞",
+        title:"Phone / Call Intelligence",
+        description:"Enter a phone number to simulate reputation and behavior analysis.",
+        placeholder:"+91 XXXXX XXXXX"
+    },
+
+    payment:{
+        icon:"💳",
+        title:"Payment Security",
+        description:"Review a payment request, UPI message or payment link.",
+        placeholder:"Paste UPI/payment request..."
+    },
+
+    app:{
+        icon:"📱",
+        title:"Application Security",
+        description:"Analyze simulated application information before installation.",
+        placeholder:"Application name / package information..."
+    },
+
+    permission:{
+        icon:"🔑",
+        title:"Permission Intelligence",
+        description:"Analyze whether application permissions appear appropriate for its purpose.",
+        placeholder:"Example: Flashlight app requests Camera, Contacts, Microphone..."
+    },
+
+    notification:{
+        icon:"🔔",
+        title:"Notification Intelligence",
+        description:"Analyze a notification before interacting with it.",
+        placeholder:"Paste notification text..."
+    },
+
+    share:{
+        icon:"📤",
+        title:"Before You Share",
+        description:"Check text for personal information, credentials and other sensitive data before sharing it.",
+        placeholder:"Paste text you are about to upload or send..."
+    },
+
+    download:{
+        icon:"📥",
+        title:"Download Guard",
+        description:"Analyze a simulated download source and file before opening it.",
+        placeholder:"Example: invoice.apk from unknown website..."
+    },
+
+    data:{
+        icon:"🧬",
+        title:"Data Exposure Scanner",
+        description:"Paste content to detect possible personal or security-sensitive information.",
+        placeholder:"Paste text, document content or sample data..."
+    }
+
+};
+
+
+function openAnalyzer(type){
+
+    currentAnalyzer=type;
+
+    const data=analyzerData[type] || analyzerData.link;
+
+    document.getElementById("analyzerIcon").textContent=data.icon;
+    document.getElementById("analyzerTitle").textContent=data.title;
+    document.getElementById("analyzerDescription").textContent=data.description;
+
+    document.getElementById("dynamicInput").innerHTML=`
+        <textarea id="analysisInput"
+        placeholder="${data.placeholder}"></textarea>
+    `;
+
+    document.getElementById("analysisResult")
+        .classList.remove("show");
+
+    navigate("analyzer");
+}
+
+
+/* =========================================================
+ANALYSIS ENGINE
+========================================================= */
+
+function runAnalysis(){
+
+    const result=document.getElementById("analysisResult");
+
+    const input=document.getElementById("analysisInput")?.value || "";
+
+    let risk=72;
+    let title="High Risk";
+    let reasons=[];
+    let next="";
+    let recommendation="";
+
+    if(currentAnalyzer==="link"){
+
+        risk=87;
+
+        reasons=[
+            "Unknown destination domain",
+            "Potential redirect behavior",
+            "Login or credential collection pattern",
+            "Domain reputation requires verification"
+        ];
+
+        next="Credential collection or redirection to a fake authentication page.";
+
+        recommendation="Do not open the link until the destination and sender are independently verified.";
+
+    }
+
+    else if(currentAnalyzer==="message" || currentAnalyzer==="email" || currentAnalyzer==="notification"){
+
+        risk=84;
+
+        reasons=[
+            "Urgency-based language detected",
+            "Potential social-engineering pattern",
+            "External interaction requested",
+            "Sender context requires verification"
+        ];
+
+        next="User may be encouraged to open a link, disclose information or make a payment.";
+
+        recommendation="Verify the sender through an independent channel before interacting.";
+
+    }
+
+    else if(currentAnalyzer==="payment"){
+
+        risk=91;
+
+        reasons=[
+            "Unexpected payment context",
+            "Urgency or pressure pattern",
+            "Recipient requires verification",
+            "External payment interaction detected"
+        ];
+
+        next="Potential redirection toward unauthorized payment or credential collection.";
+
+        recommendation="Do not authorize the transaction until the recipient and purpose are independently confirmed.";
+
+    }
+
+    else if(currentAnalyzer==="app" || currentAnalyzer==="permission"){
+
+        risk=79;
+
+        reasons=[
+            "Permission-purpose mismatch",
+            "Multiple sensitive permissions requested",
+            "Application context requires additional verification",
+            "Potential excessive access"
+        ];
+
+        next="The application may attempt to access information unrelated to its primary purpose.";
+
+        recommendation="Review permissions and install only when the requested access is justified.";
+
+    }
+
+    else if(currentAnalyzer==="share" || currentAnalyzer==="data"){
+
+        const sensitivePatterns=[
+            "phone number",
+            "email address",
+            "personal identifier",
+            "financial information"
+        ];
+
+        risk=input.length>10 ? 68 : 42;
+
+        reasons=[
+            "Personal information may be present",
+            "Content should be reviewed before external sharing",
+            "Destination privacy policy should be considered",
+            "Minimum necessary disclosure is recommended"
+        ];
+
+        next="The receiving service may process information contained in the submitted content according to its applicable terms and privacy practices.";
+
+        recommendation="Remove unnecessary personal or confidential information before sharing.";
+
+    }
+
+    else if(currentAnalyzer==="download"){
+
+        risk=88;
+
+        reasons=[
+            "Download source is not verified",
+            "Executable file type detected",
+            "Potential redirect or bundled content",
+            "Publisher authenticity requires verification"
+        ];
+
+        next="Installation or execution may expose the device to unwanted software.";
+
+        recommendation="Verify the publisher and source before opening or installing the file.";
+
+    }
+
+    else if(currentAnalyzer==="phone"){
+
+        risk=76;
+
+        reasons=[
+            "Caller reputation requires verification",
+            "Behavioral pattern resembles reported scam calls",
+            "Caller identity cannot be independently verified",
+            "Potential social-engineering risk"
+        ];
+
+        next="Caller may attempt urgency, impersonation or request sensitive information.";
+
+        recommendation="Do not share OTPs, passwords or financial information over an unverified call.";
+
+    }
+
+    if(risk>=85){
+
+        title="Critical / High Risk";
+
+    }else if(risk>=65){
+
+        title="Medium–High Risk";
+
+    }else{
+
+        title="Review Required";
+
+    }
+
+    document.getElementById("riskNumber").textContent=risk;
+    document.getElementById("resultTitle").textContent=title;
+
+    document.getElementById("reasons").innerHTML=
+        reasons.map(r=>`
+            <div class="reason">⚠ ${r}</div>
+        `).join("");
+
+    document.getElementById("nextAction").textContent=next;
+    document.getElementById("recommendation").textContent=recommendation;
+
+    result.classList.add("show");
+
+    if(risk>=80){
+
+        setTimeout(()=>{
+
+            showSecurityModal(
+                "🚨",
+                "ThreatLens AI Security Alert",
+                "A high-risk pattern was detected. ThreatLens AI recommends reviewing this event before continuing."
+            );
+
+        },700);
+
+    }
+
+    showToast("AI security analysis completed");
+
+}
+
+
+/* =========================================================
+AI CHAT
+========================================================= */
+
+function sendChat(){
+
+    const input=document.getElementById("chatInput");
+
+    const text=input.value.trim();
+
+    if(!text)return;
+
+    const messages=document.getElementById("chatMessages");
+
+    messages.innerHTML+=`
+        <div class="chat user">${escapeHtml(text)}</div>
+    `;
+
+    input.value="";
+
+    setTimeout(()=>{
+
+        let response=
+        "Based on the simulated security context, I recommend verifying the source independently before interacting with it.";
+
+        const lower=text.toLowerCase();
+
+        if(lower.includes("password") || lower.includes("data")){
+
+            response=
+            "Avoid sharing passwords, access tokens, financial credentials or unnecessary personal information. ThreatLens AI can help identify sensitive content before you submit it.";
+
+        }
+
+        else if(lower.includes("link")){
+
+            response=
+            "A suspicious link should be checked for its destination, redirects, sender context and credential/payment requests before opening.";
+
+        }
+
+        else if(lower.includes("permission")){
+
+            response=
+            "Compare each permission with the application's purpose. A mismatch does not automatically prove malicious behavior, but it is a useful reason to review the app.";
+
+        }
+
+        else if(lower.includes("attack") || lower.includes("next")){
+
+            response=
+            "In the current simulation, the predicted progression is reconnaissance → social engineering → credential collection → possible financial or account abuse.";
+
+        }
+
+        else if(lower.includes("camera") || lower.includes("microphone")){
+
+            response=
+            "On Android, supported OS indicators and permission-access information can help identify recent sensor access. ThreatLens AI should use only information the operating system actually exposes.";
+
+        }
+
+        messages.innerHTML+=`
+            <div class="chat ai">${response}</div>
+        `;
+
+        messages.scrollTop=messages.scrollHeight;
+
+    },600);
+
+}
+
+function escapeHtml(text){
+
+    const div=document.createElement("div");
+
+    div.textContent=text;
+
+    return div.innerHTML;
+}
+
+
+/* =========================================================
+ATTACK SIMULATION
+========================================================= */
+
+function startAttackSimulation(){
+
+    const consoleBox=document.getElementById("console");
+
+    const steps=[
+        {
+            flow:"flow1",
+            text:"[Observe] Suspicious attacker behavior detected.",
+            cls:"console-cyan"
+        },
+        {
+            flow:"flow2",
+            text:"[AI] Predicting next attacker action: credential probing.",
+            cls:"console-yellow"
+        },
+        {
+            flow:"flow3",
+            text:"[Defense] Adaptive simulated honeypot activated.",
+            cls:"console-green"
+        },
+        {
+            flow:"flow4",
+            text:"[Intel] Behavioral indicators collected from simulation.",
+            cls:"console-cyan"
+        },
+        {
+            flow:"flow5",
+            text:"[Defense] Threat pattern correlated and alert generated.",
+            cls:"console-red"
+        }
+    ];
+
+    consoleBox.innerHTML="";
+
+    document.querySelectorAll(".flow-node")
+        .forEach(n=>n.classList.remove("active"));
+
+    document.getElementById("attackStatus").textContent="RUNNING";
+    document.getElementById("attackStatus").className="badge medium";
+
+    steps.forEach((step,index)=>{
+
+        setTimeout(()=>{
+
+            document.getElementById(step.flow)
+                .classList.add("active");
+
+            consoleBox.innerHTML+=`
+                <div class="${step.cls}">
+                    ${step.text}
+                </div>
+            `;
+
+            consoleBox.scrollTop=consoleBox.scrollHeight;
+
+        },index*1000);
+
+    });
+
+    setTimeout(()=>{
+
+        document.getElementById("attackStatus").textContent="ADAPTIVE RESPONSE COMPLETE";
+        document.getElementById("attackStatus").className="badge low";
+
+        showSecurityModal(
+            "🍯",
+            "Adaptive Defense Activated",
+            "The simulated attacker behavior was observed, the predicted next action was generated, a controlled deception environment was activated and threat intelligence was collected."
+        );
+
+    },5200);
+
+}
+
+
+/* =========================================================
+PRIVACY / SENSOR
+========================================================= */
+
+function sensorCheck(){
+
+    showSecurityModal(
+        "📷",
+        "Sensor Privacy Monitor",
+        "Prototype status: no active camera or microphone event is being detected by this browser prototype. In the Android version, ThreatLens AI can use supported OS-level permission and privacy indicators to review sensor access."
+    );
+
+}
+
+function showPrivacyReport(){
+
+    showSecurityModal(
+        "📊",
+        "Privacy Report",
+        "Recent simulated checks: 46 privacy reviews, 12 sensitive-data findings and 0 critical credential exposures."
+    );
+
+}
+
+
+/* =========================================================
+MODAL
+========================================================= */
+
+function showSecurityModal(icon,title,text){
+
+    document.getElementById("modalIcon").textContent=icon;
+    document.getElementById("modalTitle").textContent=title;
+    document.getElementById("modalText").textContent=text;
+
+    document.getElementById("modal")
+        .classList.add("show");
+
+}
+
+function closeModal(){
+
+    document.getElementById("modal")
+        .classList.remove("show");
+
+}
+
+function showNotifications(){
+
+    showSecurityModal(
+        "🔔",
+        "3 New Security Alerts",
+        "High-risk payment link detected. Medium-risk application permission mismatch detected. Privacy review recommended for recent simulated upload."
+    );
+
+}
+
+
+/* =========================================================
+TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+    const toast=document.getElementById("toast");
+
+    document.getElementById("toastText").textContent="  "+message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer=setTimeout(()=>{
+        toast.classList.remove("show");
+    },2800);
+
+}
+
+
+/* =========================================================
+SETTINGS
+========================================================= */
+
+function toggleSwitch(element){
+
+    element.classList.toggle("on");
+
+    if(element.classList.contains("on")){
+
+        showToast("Protection enabled");
+
+    }else{
+
+        showToast("Protection disabled");
+
+    }
+
+}
+
+
+/* =========================================================
+ALERTS
+========================================================= */
+
+function clearAlerts(){
+
+    showToast("Read security alerts cleared");
+
+}
+
+
+/* =========================================================
+GLOBAL SEARCH
+========================================================= */
+
+function globalSearch(event){
+
+    if(event.key!=="Enter")return;
+
+    const query=event.target.value.toLowerCase();
+
+    if(query.includes("privacy") || query.includes("data")){
+
+        navigate("privacy");
+
+    }else if(query.includes("ai") || query.includes("assistant")){
+
+        navigate("ai");
+
+    }else if(query.includes("honeypot") || query.includes("attack") || query.includes("defense")){
+
+        navigate("defense");
+
+    }else if(query.includes("threat") || query.includes("intelligence")){
+
+        navigate("intel");
+
+    }else if(query.includes("alert")){
+
+        navigate("alerts");
+
+    }else if(query.includes("setting")){
+
+        navigate("settings");
+
+    }else{
+
+        navigate("scanner");
+        showToast("Search opened Security Scanner");
+
+    }
+
+}
+
+
+/* =========================================================
+DEMO SECURITY EVENT
+========================================================= */
+
+setTimeout(()=>{
+
+    if(document.getElementById("app").classList.contains("active")){
+
+        showSecurityModal(
+            "⚠",
+            "Predictive Threat Alert",
+            "ThreatLens AI detected a simulated combination of suspicious messaging and external-link behavior. The AI engine predicts a possible credential-collection stage."
+        );
+
+    }
+
+},8000);
+
+
+/* =========================================================
+KEYBOARD ESC
+========================================================= */
+
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="Escape"){
+
+        closeModal();
+
+    }
+
+});
+
+
+
+/* =========================================================
+ROUND 2 LIVE DEMO ENGINE
+========================================================= */
+const demoScenarios = {
+    phishing: {
+        name:"Phishing Chain",
+        risk:92, confidence:91,
+        prediction:"Credential collection → account takeover",
+        why:"Urgency language, external URL, fake-login pattern and credential request form a correlated social-engineering sequence.",
+        chain:["Suspicious message","Malicious link","Credential theft","Account takeover","Payment / data theft"],
+        indicators:[
+            ["Urgency","Pressure language"],
+            ["External URL","Untrusted destination"],
+            ["Credential request","Login information requested"],
+            ["Redirect behavior","Possible fake authentication"],
+            ["Unknown sender","Trust context is weak"],
+            ["Payment escalation","Potential downstream financial abuse"]
+        ],
+        intel:[
+            ["🎣","Campaign signal","Message + URL + credential request correlated."],
+            ["🔑","Behavior pattern","Credential probing predicted as next stage."],
+            ["🧠","Prediction","Account takeover is a plausible subsequent stage."]
+        ]
+    },
+    payment: {
+        name:"Payment Scam",
+        risk:95, confidence:93,
+        prediction:"Payment authorization → financial theft attempt",
+        why:"Unexpected payment context, urgency and recipient-verification gaps indicate a possible social-engineering payment sequence.",
+        chain:["Payment request","Urgency","Recipient manipulation","Authorization","Financial abuse"],
+        indicators:[
+            ["Urgency","Immediate payment pressure"],
+            ["Recipient","Identity requires verification"],
+            ["Payment link","External payment interaction"],
+            ["Social engineering","Trust manipulation pattern"],
+            ["Credential risk","Possible authentication request"],
+            ["Financial impact","Potential unauthorized transfer"]
+        ],
+        intel:[
+            ["💳","Payment signal","Suspicious payment context correlated."],
+            ["⚠","Escalation","Urgency can precede authorization pressure."],
+            ["🛡","Defense","User verification recommended before transaction."]
+        ]
+    },
+    privacy: {
+        name:"Privacy Exposure",
+        risk:78, confidence:86,
+        prediction:"Sensitive-data exposure → secondary misuse risk",
+        why:"Personal identifiers and contextual information may be exposed to an external service without a minimum-disclosure check.",
+        chain:["Document / text","Personal identifiers","External service","Data processing","Secondary exposure risk"],
+        indicators:[
+            ["Phone / email","Personal identifiers"],
+            ["Identity data","Potential profile information"],
+            ["Document context","More information than necessary"],
+            ["External service","Third-party processing"],
+            ["Minimum disclosure","Review recommended"],
+            ["Privacy risk","Exposure may persist after sharing"]
+        ],
+        intel:[
+            ["🔐","Privacy signal","Sensitive-data category detected."],
+            ["📄","Exposure","Document context contains identifying information."],
+            ["🧩","Correlation","Multiple identifiers increase contextual exposure."]
+        ]
+    },
+    app: {
+        name:"Malicious App",
+        risk:89, confidence:88,
+        prediction:"Permission abuse → sensitive-data access attempt",
+        why:"The simulated app requests sensitive permissions that do not clearly match its stated purpose.",
+        chain:["Unknown app","Permission request","Purpose mismatch","Sensitive access","Potential data misuse"],
+        indicators:[
+            ["Contacts","Sensitive permission"],
+            ["Microphone","Sensitive permission"],
+            ["Camera","Sensitive permission"],
+            ["Purpose mismatch","Access exceeds expected function"],
+            ["Unknown publisher","Trust requires verification"],
+            ["Installation risk","Source should be validated"]
+        ],
+        intel:[
+            ["📱","App signal","Sensitive permission set observed."],
+            ["🔑","Permission pattern","Purpose mismatch requires review."],
+            ["🧠","Prediction","Sensitive-data access is a plausible next stage."]
+        ]
+    }
+};
+
+let selectedDemoScenario = "phishing";
+let demoRunning = false;
+let demoRunId = 0;
+
+function selectDemoScenario(key, button){
+    if(demoRunning) return;
+    selectedDemoScenario = key;
+    document.querySelectorAll(".scenario-btn").forEach(b=>b.classList.remove("active"));
+    if(button) button.classList.add("active");
+    updateDemoPreview();
+    resetLiveDemo(false);
+}
+
+function updateDemoPreview(){
+    const d = demoScenarios[selectedDemoScenario];
+    document.getElementById("demoRisk").textContent = d.risk;
+    document.getElementById("demoConfidence").textContent = d.confidence+"%";
+    document.getElementById("demoPrediction").textContent = d.prediction;
+    document.getElementById("demoPredictionWhy").textContent = d.why;
+    document.getElementById("predictionMeter").style.width = d.confidence+"%";
+
+    const indicators = document.getElementById("demoIndicators");
+    indicators.innerHTML = d.indicators.slice(0,6).map(x =>
+        `<div class="indicator"><b>${escapeHtml(x[0])}</b>${escapeHtml(x[1])}</div>`
+    ).join("");
+
+    document.getElementById("demoAttackChain").innerHTML = d.chain.map((x,i)=>
+        `${i?'<span class="chain-arrow">→</span>':''}<span class="chain-node ${i===0?'current':''}" data-chain-index="${i}">${escapeHtml(x)}</span>`
+    ).join("");
+    updateVisualScenario(d);
+}
+
+function updateVisualScenario(d){
+    const title = document.getElementById("visualSourceTitle");
+    const text = document.getElementById("visualSourceText");
+    const icon = document.getElementById("visualSourceIcon");
+    const signals = document.getElementById("visualSignals");
+    if(!title) return;
+    const sourceMap={
+        "Phishing Chain":["📩","Suspicious message","A message contains urgency, an external link and a possible credential request."],
+        "Payment Scam":["💳","Suspicious payment request","A payment-related event shows urgency and recipient-verification concerns."],
+        "Privacy Exposure":["📄","Sensitive data sharing","Personal identifiers and contextual information may be exposed externally."],
+        "Malicious App":["📱","Unknown application","The simulated app requests sensitive permissions that may not match its purpose."]
+    };
+    const m=sourceMap[d.name]||sourceMap["Phishing Chain"];
+    icon.textContent=m[0]; title.textContent=m[1]; text.textContent=m[2];
+    signals.innerHTML=d.indicators.slice(0,4).map(x=>`<span class="signal-pill">${escapeHtml(x[0])}</span>`).join("");
+}
+
+function updateVisualStage(step,d){
+    const source=document.getElementById("visualSource"), engine=document.getElementById("visualEngine"), defense=document.getElementById("visualDefense");
+    const state=document.getElementById("visualState"), e1=document.getElementById("visualArrow1"), e2=document.getElementById("visualArrow2");
+    [source,engine,defense,e1,e2].forEach(x=>x&&x.classList.remove("active","danger","done"));
+    const ev=document.getElementById("visualEvent");
+    const evLines=ev.querySelectorAll(".event-value");
+    const sourceSignal=document.querySelectorAll("#visualSignals .signal-pill");
+    sourceSignal.forEach((x,i)=>x.classList.toggle("hit",i<=Math.min(step,sourceSignal.length-1)));
+    if(step===0){ source.classList.add("active"); e1.classList.add("active"); state.textContent="OBSERVING"; state.className="badge medium"; evLines[0].textContent=d.chain[0]; evLines[1].textContent="Observation layer received a new digital event"; evLines[2].textContent="Extract and inspect signals"; }
+    if(step===1){ source.classList.add("done"); engine.classList.add("active"); e1.classList.add("active"); state.textContent="CORRELATING"; state.className="badge medium"; evLines[1].textContent="Multiple indicators correlate into one attack pattern"; evLines[2].textContent="Estimate likely attack progression"; }
+    if(step===2){ source.classList.add("done"); engine.classList.add("active"); e1.classList.add("active"); state.textContent="PREDICTING"; state.className="badge medium"; evLines[1].textContent="AI confidence: "+d.confidence+"%"; evLines[2].textContent=d.prediction; document.getElementById("visualEngineTitle").textContent="Next action predicted"; document.getElementById("visualEngineText").textContent=d.why; }
+    if(step===3){ engine.classList.add("danger"); e2.classList.add("active"); state.textContent="USER ALERT"; state.className="badge high"; evLines[0].textContent="RISK "+d.risk+"/100 — HIGH"; evLines[0].classList.add("alert"); evLines[1].textContent="Evidence + prediction presented to the user"; evLines[2].textContent="Review warning before continuing"; }
+    if(step===4){ engine.classList.add("done"); defense.classList.add("active"); e2.classList.add("active"); state.textContent="ADAPTIVE DEFENSE"; state.className="badge low"; evLines[1].textContent="Controlled deception environment activated"; evLines[2].textContent="Capture simulated attacker behavior"; document.getElementById("visualDefenseTitle").textContent="Honeypot activated"; document.getElementById("honeypotVisual").classList.add("show"); }
+    if(step===5){ engine.classList.add("done"); defense.classList.add("done"); state.textContent="DEFENSE LOOP COMPLETE"; state.className="badge low"; evLines[1].textContent="Behavior converted into reusable threat intelligence"; evLines[2].textContent="Feed intelligence back into future detection"; document.getElementById("visualDefenseTitle").textContent="Threat intelligence updated"; document.getElementById("visualDefenseText").textContent="The observed pattern is stored as reusable security knowledge in the controlled demo."; }
+    document.querySelectorAll("#demoAttackChain .chain-node").forEach((n,i)=>{n.classList.toggle("reached",i<Math.min(step+1,d.chain.length));n.classList.toggle("next",i===Math.min(step+1,d.chain.length-1));});
+}
+
+function resetLiveDemo(showMessage=true){
+    demoRunId++;
+    demoRunning=false;
+    const badge=document.getElementById("demoStageBadge");
+    if(badge){badge.textContent="READY";badge.className="badge low";}
+    document.querySelectorAll("#demoTimeline .timeline-item").forEach(x=>x.classList.remove("active","done","danger"));
+    const consoleBox=document.getElementById("demoConsole");
+    if(consoleBox){
+        consoleBox.innerHTML=`
+        <div style="opacity:1"><span class="time">[00:00:00]</span> <span class="tag console-cyan">SYSTEM</span> ThreatLens AI demo engine ready.</div>
+        <div style="opacity:1"><span class="time">[00:00:01]</span> <span class="tag">WAIT</span> Select a scenario and run the simulation.</div>`;
+    }
+    const intel=document.getElementById("demoIntel");
+    if(intel) intel.innerHTML=`<div class="intel-card"><div class="intel-icon">◉</div><div><strong>Waiting for incident</strong><p>Collected signals will appear here during the simulation.</p></div></div>`;
+    const progress=document.getElementById("demoProgress");
+    if(progress) progress.style.width="0%";
+    const progressText=document.getElementById("demoProgressText");
+    if(progressText) progressText.textContent="0%";
+    updateDemoPreview();
+    ["visualSource","visualEngine","visualDefense","visualArrow1","visualArrow2"].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove("active","danger","done");});
+    const vs=document.getElementById("visualState"); if(vs){vs.textContent="WAITING FOR EVENT";vs.className="badge low";}
+    const hv=document.getElementById("honeypotVisual"); if(hv)hv.classList.remove("show");
+    const ev=document.getElementById("visualEvent"); if(ev){ev.querySelectorAll(".event-value").forEach((x,i)=>{x.classList.remove("alert");x.textContent=["Waiting for a simulated incident...","No active threat signal","Awaiting observation"][i]||"";});}
+    if(showMessage) showToast("Live demo reset");
+}
+
+function addDemoLog(tag, text, cls=""){
+    const box=document.getElementById("demoConsole");
+    const now = new Date().toLocaleTimeString([], {hour12:false});
+    const line=document.createElement("div");
+    line.className="log-line";
+    line.innerHTML=`<span class="time">[${now}]</span> <span class="tag ${cls}">${escapeHtml(tag)}</span> ${escapeHtml(text)}`;
+    box.appendChild(line);
+    box.scrollTop=box.scrollHeight;
+}
+
+function setDemoStep(step, label, percent){
+    document.querySelectorAll("#demoTimeline .timeline-item").forEach((x,i)=>{
+        x.classList.toggle("done", i < step);
+        x.classList.toggle("active", i === step);
+        x.classList.toggle("danger", i === 3);
+    });
+    const badge=document.getElementById("demoStageBadge");
+    badge.textContent=label;
+    badge.className = step===3 ? "badge high" : (step>=4 ? "badge low" : "badge medium");
+    document.getElementById("demoProgress").style.width=percent+"%";
+    document.getElementById("demoProgressText").textContent=percent+"%";
+    updateVisualStage(step, demoScenarios[selectedDemoScenario]);
+}
+
+function runLiveDemo(){
+    if(demoRunning) return;
+    demoRunning=true;
+    const run=++demoRunId;
+    const d=demoScenarios[selectedDemoScenario];
+
+    resetLiveDemo(false);
+    demoRunning=true;
+    document.getElementById("demoStageBadge").textContent="STARTING";
+    document.getElementById("demoStageBadge").className="badge medium";
+    showToast("ThreatLens AI live attack simulation started");
+
+    const steps=[
+        [0, "OBSERVE", "Digital event observed: "+d.chain[0], "console-cyan", 8],
+        [1, "CORRELATE", "Multiple weak signals correlated into a possible "+d.name+" sequence.", "console-yellow", 24],
+        [2, "PREDICT", "Next attacker action predicted: "+d.prediction, "console-yellow", 43],
+        [3, "ALERT", "High-priority user alert generated with explainable indicators.", "console-red", 60],
+        [4, "ADAPT", "Controlled adaptive honeypot / deception simulation activated.", "console-green", 80],
+        [5, "INTEL", "Observed behavior converted into reusable threat intelligence.", "console-cyan", 100]
+    ];
+
+    steps.forEach((s,i)=>{
+        setTimeout(()=>{
+            if(run!==demoRunId)return;
+            setDemoStep(s[0],s[1],s[4]);
+            addDemoLog(s[1],s[2],s[3]);
+            if(s[0]===3){
+                showSecurityModal("🚨","Predictive Threat Alert",
+                    `${d.name}: risk ${d.risk}/100. Predicted next action: ${d.prediction}. The warning is based on correlated simulated indicators.`);
+            }
+            if(s[0]===4){
+                addDemoLog("HONEYPOT","Attacker interaction is being contained inside the controlled simulation.", "console-green");
+            }
+            if(s[0]===5){
+                document.getElementById("demoIntel").innerHTML=d.intel.map(x=>
+                    `<div class="intel-card"><div class="intel-icon">${x[0]}</div><div><strong>${escapeHtml(x[1])}</strong><p>${escapeHtml(x[2])}</p></div></div>`
+                ).join("");
+                document.getElementById("afterScore").textContent = Math.min(99, 82 + Math.round(d.risk/10));
+            }
+        }, i*1100);
+    });
+
+    setTimeout(()=>{
+        if(run!==demoRunId)return;
+        demoRunning=false;
+        setDemoStep(5,"DEFENSE LOOP COMPLETE",100);
+        addDemoLog("COMPLETE","Observe → Detect → Correlate → Predict → Alert → Adapt → Intelligence loop completed.", "console-green");
+        showSecurityModal("🛡","Adaptive Defense Complete",
+            "The controlled demo connected threat observation, prediction, alerting, adaptive deception and threat-intelligence collection into one continuous workflow.");
+        showToast("Threat intelligence updated");
+    }, 6500);
+}
+
+function showDemoReport(){
+    const d=demoScenarios[selectedDemoScenario];
+    showSecurityModal("▣","Incident Explanation",
+        `${d.name}: ThreatLens AI observed multiple simulated indicators, correlated them, estimated a ${d.confidence}% prediction confidence, and identified "${d.prediction}" as the plausible next stage. The current browser prototype demonstrates this as a controlled simulation; real device-level monitoring requires native platform APIs.`);
+}
+
+/* Initialize the enhanced demo preview without changing existing behavior. */
+document.addEventListener("DOMContentLoaded",()=>{
+    updateDemoPreview();
+});
+
+
+document.addEventListener('DOMContentLoaded',()=>{
+ renderSOCGraph(0,false);
+ document.querySelectorAll('.telemetry-tab').forEach(btn=>btn.addEventListener('click',()=>{
+   document.querySelectorAll('.telemetry-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+   const type=btn.dataset.type;const rows=document.querySelectorAll('#socTelemetryStream .telemetry-row');rows.forEach(r=>r.style.display=(type==='auth'||type==='dns'||type==='process')&&r.querySelector('.kind')?.textContent.toLowerCase()===type?'block':'none');
+ }));
+});
+
+/* =========================================================
+SOC INCIDENT RECONSTRUCTION ENGINE — HACKATHON UPGRADE
+Controlled defensive simulation using fictional telemetry.
+========================================================= */
+const socHostsData=[
+ {id:'WS-07',label:'WS-07',role:'User Workstation',x:105,y:185,cls:'root'},
+ {id:'AUTH-01',label:'AUTH-01',role:'Identity Server',x:270,y:90,cls:'suspicious'},
+ {id:'FS-02',label:'FS-02',role:'File Server',x:445,y:185,cls:'compromised'},
+ {id:'DB-01',label:'DB-01',role:'Database',x:610,y:95,cls:''},
+ {id:'APP-03',label:'APP-03',role:'Application Server',x:610,y:275,cls:''},
+ {id:'DC-01',label:'DC-01',role:'Domain Controller',x:445,y:325,cls:'predicted'}
+];
+const socEdges=[['WS-07','AUTH-01'],['AUTH-01','FS-02'],['FS-02','DB-01'],['FS-02','APP-03'],['FS-02','DC-01']];
+const socEvents=[
+ {t:'00:00:11',type:'AUTH',host:'WS-07',text:'Successful authentication follows 5 failed attempts for user n.singh',attack:'T1078',stage:0},
+ {t:'00:00:18',type:'DNS',host:'WS-07',text:'Newly observed external domain queried by workstation',attack:'T1071.004',stage:0},
+ {t:'00:00:26',type:'PROCESS',host:'WS-07',text:'Unusual script interpreter child process observed',attack:'T1059.001',stage:1},
+ {t:'00:00:41',type:'AUTH',host:'AUTH-01',text:'Same account authenticates from WS-07 context',attack:'T1078',stage:2},
+ {t:'00:00:53',type:'PROCESS',host:'AUTH-01',text:'Remote management process chain observed',attack:'T1021',stage:3},
+ {t:'00:01:08',type:'AUTH',host:'FS-02',text:'Previously unseen account-to-host authentication',attack:'T1021.001',stage:4},
+ {t:'00:01:19',type:'DNS',host:'FS-02',text:'Internal service discovery pattern follows remote access',attack:'T1018',stage:4},
+ {t:'00:01:31',type:'PROCESS',host:'FS-02',text:'Process tree consistent with remote session activity',attack:'T1021.001',stage:4}
+];
+const socTech={
+ 'T1078':['Valid Accounts','Authentication telemetry shows an unusual successful login after repeated failures.'],
+ 'T1071.004':['Application Layer Protocol: DNS','DNS activity is correlated with the same workstation timeline.'],
+ 'T1059.001':['PowerShell','Endpoint process telemetry indicates an unusual script-interpreter chain.'],
+ 'T1021':['Remote Services','Cross-host remote access evidence indicates possible lateral movement.'],
+ 'T1021.001':['Remote Services: RDP','A simulated remote-service event links the compromised identity to FS-02.'],
+ 'T1018':['Remote System Discovery','Internal discovery-like DNS behavior appears after the host pivot.']
+};
+let socRunning=false,socTimer=null,socIndex=0;
+function socLog(msg,tag='SOC'){const c=document.getElementById('socConsole');if(!c)return;const row=document.createElement('div');row.className='soc-log-new';row.innerHTML=`<span class="time">[${new Date().toLocaleTimeString([], {hour12:false})}]</span> <span class="tag">${tag}</span> ${escapeHtml(msg)}`;c.appendChild(row);c.scrollTop=c.scrollHeight;}
+function renderSOCGraph(activeCount=0,final=false){
+ const eg=document.getElementById('graphEdges'),ng=document.getElementById('graphNodes');if(!eg||!ng)return;
+ eg.innerHTML=socEdges.map((e,i)=>{const a=socHostsData.find(x=>x.id===e[0]),b=socHostsData.find(x=>x.id===e[1]);let cls=i<activeCount?'active':'';if(final&&i===4)cls+=' predicted';return `<line class="graph-edge ${cls}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;}).join('');
+ ng.innerHTML=socHostsData.map((h,i)=>{let cls=h.cls;if(i<2)cls='root';if(i===2&&activeCount>=5)cls='compromised';if(final&&h.id==='DC-01')cls='predicted';return `<g class="graph-node ${cls}"><circle cx="${h.x}" cy="${h.y}" r="34"></circle><text x="${h.x}" y="${h.y-2}">${h.label}</text><text class="sub" x="${h.x}" y="${h.y+13}">${h.role}</text></g>`;}).join('');
+}
+function renderSOCEvent(e){const box=document.getElementById('socTelemetryStream');const row=document.createElement('div');row.className='telemetry-row';row.innerHTML=`<span class="time">[${e.t}]</span> <span class="host">${e.host}</span> <span class="kind">${e.type}</span> <b>${escapeHtml(e.text)}</b> <span class="danger">ATT&CK ${e.attack}</span>`;box.appendChild(row);box.scrollTop=box.scrollHeight;}
+function renderSOCTechniques(events){const ids=[...new Set(events.map(e=>e.attack))];document.getElementById('socTechniques').textContent=ids.length;document.getElementById('socTechCards').innerHTML=ids.map(id=>{const x=socTech[id]||['Mapped technique','Evidence correlated from simulated telemetry.'];return `<div class="tech-card"><span class="tech-id">${id}</span><strong>${x[0]}</strong><p>${x[1]}</p></div>`;}).join('');}
+function updateSOCStage(i){const hostCount=Math.min(6,2+Math.floor(i/1.5));document.getElementById('socHosts').textContent=`${hostCount} / 6`;if(i>=5){document.getElementById('socLateral').textContent='DETECTED';document.getElementById('socLateral').style.color='var(--red)';document.getElementById('socGraphState').textContent='CORRELATED';renderSOCGraph(Math.min(5,Math.floor(i/1.5)));}else if(i>=3){document.getElementById('socLateral').textContent='SUSPECTED';document.getElementById('socLateral').style.color='#ffb24a';}document.getElementById('socTelemetryBadge').textContent=i?'STREAMING':'WAITING';}
+function finishSOCIncident(){socRunning=false;clearInterval(socTimer);renderSOCGraph(5,true);document.getElementById('socHosts').textContent='6 / 6';document.getElementById('socLateral').textContent='DETECTED';document.getElementById('socLateral').style.color='var(--red)';document.getElementById('socNext').textContent='DC-01';document.getElementById('socNextSub').textContent='High-value predicted target';document.getElementById('targetCore').textContent='DC';document.getElementById('socTargetName').textContent='DC-01 — Domain Controller';document.getElementById('socTargetReason').textContent='The simulated engine prioritizes DC-01 because it is reachable from the correlated pivot path and represents a high-impact identity asset. This is a prediction, not an observed compromise.';document.getElementById('socPredictionMeter').style.width='88%';document.getElementById('socPredictionConfidence').textContent='88%';document.getElementById('socChainState').textContent='RECONSTRUCTED';document.getElementById('socEvidence').innerHTML='<div><b>Root-cause entry point</b><span>WS-07 — suspicious authentication + DNS + process sequence</span></div><div><b>Current attacker stage</b><span>FS-02 — lateral movement evidence correlated</span></div><div><b>Why DC-01?</b><span>Reachability + identity value + observed pivot pattern</span></div>';socLog('Incident reconstructed across fragmented telemetry. Lateral movement flagged; next target prediction generated.','COMPLETE');showToast('SOC incident reconstructed');}
+function runSOCIncident(){if(socRunning)return;resetSOCIncident(false);socRunning=true;socIndex=0;socLog('Starting multi-host telemetry correlation...','ENGINE');const stream=document.getElementById('socTelemetryStream');stream.innerHTML='';renderSOCGraph(0,false);socTimer=setInterval(()=>{if(socIndex>=socEvents.length){finishSOCIncident();return;}const e=socEvents[socIndex];renderSOCEvent(e);updateSOCStage(socIndex+1);renderSOCTechniques(socEvents.slice(0,socIndex+1));socLog(`${e.host}: ${e.type} evidence correlated with ATT&CK ${e.attack}`,'CORRELATE');if(socIndex===3)socLog('Repeated identity + endpoint signals now form a cross-host incident candidate.','DETECT');if(socIndex===5)socLog('Pivot from AUTH-01 to FS-02 matches a lateral-movement pattern.','LATERAL');socIndex++;},850);}
+function resetSOCIncident(show=true){clearInterval(socTimer);socRunning=false;socIndex=0;document.getElementById('socTelemetryStream').innerHTML='<div class="empty-state">Press <b>Reconstruct Incident</b> to stream fragmented telemetry.</div>';document.getElementById('socHosts').textContent='0 / 6';document.getElementById('socTechniques').textContent='0';document.getElementById('socLateral').textContent='STANDBY';document.getElementById('socLateral').style.color='';document.getElementById('socNext').textContent='—';document.getElementById('socNextSub').textContent='Prediction pending';document.getElementById('socGraphState').textContent='DISCONNECTED';document.getElementById('socTelemetryBadge').textContent='WAITING';document.getElementById('socChainState').textContent='ANALYZING';document.getElementById('socTechCards').innerHTML='<div class="empty-state">ATT&CK mappings will appear as telemetry is correlated.</div>';document.getElementById('socEvidence').innerHTML='<div><b>Root-cause entry point</b><span>Pending correlation</span></div><div><b>Current attacker stage</b><span>Pending correlation</span></div><div><b>Why lateral movement?</b><span>Pending cross-host evidence</span></div>';document.getElementById('targetCore').textContent='?';document.getElementById('socTargetName').textContent='Prediction pending';document.getElementById('socTargetReason').textContent='The engine will compare reachable assets, recent authentication evidence and asset criticality.';document.getElementById('socPredictionMeter').style.width='0%';document.getElementById('socPredictionConfidence').textContent='—';document.getElementById('socConsole').innerHTML='<div><span class="time">[00:00:00]</span> <span class="tag console-cyan">SOC</span> Incident reconstruction engine ready.</div>';renderSOCGraph(0,false);if(show)showToast('SOC simulation reset');}
+</script>
+
+</body>
+</html>
